@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Assistant - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        #logo-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #logo-container img {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            object-fit: contain;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #fcc;
+            display: none;
+        }
+
+
+
+        .security-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                width: 95%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div id="logo-container"></div>
+            <h1>Banking Assistant</h1>
+            <p>Secure login to access your banking companion</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button type="submit" class="login-button" id="loginButton">
+                Sign In
+            </button>
+        </form>
+
+        <div class="loading" id="loading"></div>
+
+
+
+        <div class="security-notice">
+            🔒 This is a demo system. All credentials are for testing purposes only.
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:5001';
+        
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Check if user is already logged in
+        checkAuthStatus();
+
+        loginForm.addEventListener('submit', handleLogin);
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/status`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        // User is already logged in, redirect to main app
+                        window.location.href = '/chat';
+                    }
+                }
+            } catch (error) {
+                console.log('Not authenticated, showing login form');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+            
+            // Show loading state
+            setLoadingState(true);
+            hideError();
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Login successful
+                    console.log('Login successful:', data.user);
+                    
+                    // Redirect to main application
+                    window.location.href = '/chat';
+                } else {
+                    // Login failed
+                    showError(data.error || 'Login failed. Please check your credentials.');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Connection error. Please check if the backend is running.');
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function setLoadingState(loading) {
+            if (loading) {
+                loginButton.disabled = true;
+                loginButton.textContent = 'Signing In...';
+                document.getElementById('loading').style.display = 'block';
+            } else {
+                loginButton.disabled = false;
+                loginButton.textContent = 'Sign In';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Load logo
+        const logoContainer = document.getElementById('logo-container');
+        
+        // Create image element for custom bank logo
+        const logoImg = document.createElement('img');
+        logoImg.src = 'Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png';
+        logoImg.alt = 'Bank Logo';
+        logoImg.title = 'Small Bank';
+        
+        logoContainer.appendChild(logoImg);
+
+        // Focus username field on load
+        usernameInput.focus();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enhanced Banking Assistant - Professional Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard-container {
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            opacity: 0.8;
+            font-size: 12px;
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-info .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-info .user-role {
+            opacity: 0.8;
+            font-size: 12px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.online {
+            background: #28a745;
+        }
+
+        .status-indicator.offline {
+            background: #dc3545;
+        }
+
+        .quick-actions {
+            margin-bottom: 30px;
+        }
+
+        .quick-actions h3 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .action-button {
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            text-align: left;
+            transition: background-color 0.3s ease;
+            font-size: 13px;
+        }
+
+        .action-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .action-button .icon {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .shortcuts {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .shortcuts h3 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+
+        .shortcut {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .shortcut .key {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .control-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: #218838;
+        }
+
+        .control-button.danger {
+            background: #dc3545;
+        }
+
+        .control-button.danger:hover {
+            background: #c82333;
+        }
+
+        .control-button.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .control-button.warning:hover {
+            background: #e0a800;
+        }
+
+        .control-button.info {
+            background: #17a2b8;
+        }
+
+        .control-button.info:hover {
+            background: #138496;
+        }
+
+        .security-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 20px;
+            font-size: 12px;
+            border-bottom: 1px solid #ffeaa7;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.bot .message-avatar {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            resize: none;
+            min-height: 50px;
+            max-height: 120px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+            font-size: 18px;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #fcc;
+        }
+
+        .customer-info {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .privacy-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        /* Productivity Features */
+        .productivity-bar {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .productivity-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .productivity-item .label {
+            color: #6c757d;
+        }
+
+        .productivity-item .value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                overflow-y: auto;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+                flex: 1;
+            }
+            
+            .sidebar-header {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+            
+            .sidebar-header h1 {
+                font-size: 16px;
+            }
+            
+            .sidebar-header p {
+                font-size: 11px;
+            }
+            
+            .user-info {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .quick-actions {
+                margin-bottom: 15px;
+            }
+            
+            .quick-actions h3 {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+            
+            .action-button {
+                padding: 8px 12px;
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+            
+            .shortcuts {
+                display: none;
+            }
+            
+            .chat-header {
+                padding: 15px;
+            }
+            
+            .chat-header h2 {
+                font-size: 16px;
+            }
+            
+            .control-button {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            
+            .productivity-bar {
+                padding: 8px 15px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .productivity-item {
+                font-size: 11px;
+            }
+            
+            .security-notice {
+                padding: 6px 15px;
+                font-size: 11px;
+            }
+            
+            .chat-messages {
+                padding: 15px;
+            }
+            
+            .message-content {
+                max-width: 90%;
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+            
+            .message-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            
+            .chat-input-container {
+                padding: 15px;
+            }
+            
+            .chat-input {
+                padding: 10px 14px;
+                font-size: 14px;
+                min-height: 45px;
+            }
+            
+            .send-button {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+            
+            .typing-indicator {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-container {
+                height: 100vh;
+            }
+            
+            .sidebar {
+                max-height: 150px;
+            }
+            
+            .quick-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .action-button {
+                flex: 1;
+                min-width: calc(50% - 5px);
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+            
+            .message-content {
+                max-width: 95%;
+                font-size: 13px;
+            }
+            
+            .chat-input {
+                font-size: 13px;
+            }
+            
+            .productivity-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 11px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Mobile-specific improvements */
+        @media (max-width: 768px) {
+            body {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            
+            .chat-input {
+                -webkit-user-select: text;
+                -khtml-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+            }
+            
+            .action-button {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            .send-button {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            .control-button {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <img src="Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank Logo" style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px;">
+                </div>
+                <h1>Customer</h1>
+                <p>Professional Dashboard</p>
+            </div>
+
+            <div class="user-info">
+                <div class="user-name" id="userName">Loading...</div>
+                <div class="user-role" id="userRole">Loading...</div>
+                <div style="margin-top: 10px; font-size: 11px;">
+                    <span class="status-indicator" id="backendStatus">●</span>
+                    <span id="backendStatusText">Checking...</span>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <h3>🚀 Quick Actions</h3>
+                <button class="action-button" onclick="showMyProfile()">
+                    <span class="icon">👤</span> My Profile
+                </button>
+                <button class="action-button" onclick="showMyLoan()">
+                    <span class="icon">💰</span> My Loan
+                </button>
+                <button class="action-button" onclick="window.location.href='loan-calculator.html'">
+                    <span class="icon">🧮</span> Loan Calculator
+                </button>
+                <button class="action-button danger" onclick="clearChat()">
+                    <span class="icon">🗑️</span> Clear Chat
+                </button>
+                <button class="action-button" id="adminButton" onclick="goToAdmin()" style="display: none;">
+                    <span class="icon">👑</span> Admin Dashboard
+                </button>
+            </div>
+
+            <div class="shortcuts">
+                <h3>⌨️ Keyboard Shortcuts</h3>
+                <div class="shortcut">
+                    <span class="key">Enter</span> Send message
+                </div>
+                <div class="shortcut">
+                    <span class="key">Shift+Enter</span> New line
+                </div>
+                <div class="shortcut">
+                    <span class="key">Ctrl+L</span> Loan calculator
+                </div>
+                <div class="shortcut">
+                    <span class="key">Ctrl+C</span> Clear chat
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="chat-header">
+                <h2>💬 Customer Chat</h2>
+                <div class="header-controls">
+                    <button class="control-button" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="productivity-bar">
+                <div class="productivity-item">
+                    <span class="label">Messages:</span>
+                    <span class="value" id="messageCount">0</span>
+                </div>
+                <div class="productivity-item">
+                    <span class="label">Session Time:</span>
+                    <span class="value" id="sessionTime">00:00</span>
+                </div>
+                <div class="productivity-item">
+                    <span class="label">Customers:</span>
+                    <span class="value" id="customerCount">50</span>
+                </div>
+                <div class="productivity-item">
+                    <span class="label">Status:</span>
+                    <span class="value" id="connectionStatus">Online</span>
+                </div>
+            </div>
+            
+            <div class="security-notice">
+                🔒 This is a demo system. All customer data is fictional and for testing purposes only.
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-avatar">
+                <img src="Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
+            </div>
+                    <div class="message-content">
+                        Hello! 🤗 Welcome to your customer dashboard. I can help you with your banking questions and provide personalized insights based on your account information (using fictional data for demonstration). 
+
+                        <div class="privacy-warning">
+                            <strong>Privacy Notice:</strong> I will never ask for or display real personal information. All customer data shown is fictional and for demonstration purposes only.
+                        </div>
+
+                        <strong>Quick Actions:</strong>
+                        • Click "My Profile" to see your account details
+                        • Click "My Loan" to view your loan information (if applicable)
+                        • Use the sidebar for quick actions
+                        • Try keyboard shortcuts for faster navigation
+
+                        What can I help you with today?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <span class="loading-dots">Assistant is typing</span>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        id="chatInput" 
+                        class="chat-input" 
+                        placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
+                        rows="1"
+                    ></textarea>
+                    <button id="sendButton" class="send-button" title="Send message (Enter)">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const BACKEND_URL = 'http://localhost:5001';
+        
+        // DOM elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const backendStatus = document.getElementById('backendStatus');
+        const backendStatusText = document.getElementById('backendStatusText');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const messageCount = document.getElementById('messageCount');
+        const sessionTime = document.getElementById('sessionTime');
+        const customerCount = document.getElementById('customerCount');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        // Session tracking
+        let messageHistory = [];
+        let sessionStartTime = new Date();
+        let sessionTimer;
+
+        // Check authentication and backend status on load
+        checkAuthStatus();
+        checkBackendStatus();
+        startSessionTimer();
+
+        // Auto-resize textarea
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Send message on Enter (but allow Shift+Enter for new lines)
+            if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+            
+            // Ctrl+L: Loan calculator
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                window.open('loan-calculator.html', '_blank');
+            }
+            
+            // Ctrl+C: Clear chat
+            if (e.ctrlKey && e.key === 'c') {
+                e.preventDefault();
+                clearChat();
+            }
+        });
+
+        // Send message on button click
+        sendButton.addEventListener('click', sendMessage);
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/status`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        // User is authenticated
+                        userName.textContent = data.user.name;
+                        userRole.textContent = data.user.role;
+                        
+                        // Show admin button if user is admin
+                        if (data.user.role === 'admin') {
+                            document.getElementById('adminButton').style.display = 'block';
+                        }
+                    } else {
+                        // User is not authenticated, redirect to login
+                        window.location.href = '/';
+                    }
+                } else {
+                    // Error checking auth status, redirect to login
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+                // Connection error, redirect to login
+                window.location.href = '/';
+            }
+        }
+
+        function goToAdmin() {
+            window.location.href = '/admin';
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // Redirect to login page
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Redirect to login page anyway
+                window.location.href = '/';
+            }
+        }
+
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    backendStatus.className = 'status-indicator online';
+                    backendStatusText.textContent = 'Online';
+                    connectionStatus.textContent = 'Online';
+                    customerCount.textContent = data.customer_count;
+                } else {
+                    throw new Error('Backend not responding');
+                }
+            } catch (error) {
+                backendStatus.className = 'status-indicator offline';
+                backendStatusText.textContent = 'Offline';
+                connectionStatus.textContent = 'Offline';
+            }
+        }
+
+        function startSessionTimer() {
+            sessionTimer = setInterval(() => {
+                const now = new Date();
+                const diff = now - sessionStartTime;
+                const minutes = Math.floor(diff / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                sessionTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function updateMessageCount() {
+            messageCount.textContent = messageHistory.length;
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+
+            // Disable input while processing
+            setInputState(false);
+
+            // Show typing indicator
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                // Send request to backend
+                const response = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        message: message,
+                        history: messageHistory
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const botResponse = data.response;
+
+                // Add bot response to chat
+                addMessage(botResponse, 'bot');
+
+                // Update message history
+                messageHistory.push({ role: 'user', content: message });
+                messageHistory.push({ role: 'assistant', content: botResponse });
+
+                // Keep only last 10 messages to manage context length
+                if (messageHistory.length > 10) {
+                    messageHistory = messageHistory.slice(-10);
+                }
+
+                // Update message count
+                updateMessageCount();
+
+            } catch (error) {
+                console.error('Error:', error);
+                let errorMessage = 'Sorry, I encountered an error while processing your request. ';
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage += 'Please check that the Python backend is running on http://localhost:5001';
+                } else {
+                    errorMessage += 'Error: ' + error.message;
+                }
+                
+                addMessage(errorMessage, 'bot');
+            } finally {
+                // Hide typing indicator and re-enable input
+                typingIndicator.style.display = 'none';
+                setInputState(true);
+                chatInput.focus();
+            }
+        }
+
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            
+            if (sender === 'user') {
+                avatar.textContent = '👤';
+            } else {
+                // Create image element for bank logo
+                const bankImg = document.createElement('img');
+                bankImg.src = 'Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png';
+                bankImg.alt = 'Bank';
+                bankImg.style.width = '100%';
+                bankImg.style.height = '100%';
+                bankImg.style.objectFit = 'contain';
+                bankImg.style.borderRadius = '50%';
+                avatar.appendChild(bankImg);
+            }
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content; // Use innerHTML to support formatting
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function setInputState(enabled) {
+            chatInput.disabled = !enabled;
+            sendButton.disabled = !enabled;
+        }
+
+        // Test backend function
+        async function testBackend() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/test-connection`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage('✅ Backend connection test successful! Both Flask backend and Ollama are working properly.', 'bot');
+                } else {
+                    addMessage('❌ Backend test failed: ' + data.message, 'bot');
+                }
+                
+            } catch (error) {
+                console.error('Test error:', error);
+                addMessage('❌ Backend test failed: ' + error.message, 'bot');
+            }
+        }
+
+        // Current customer profile function
+        async function showMyProfile() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customer/current`, {
+                    credentials: 'include'
+                });
+                const customer = await response.json();
+                
+                if (customer.error) {
+                    addMessage('❌ Error loading customer data: ' + customer.error, 'bot');
+                    return;
+                }
+                
+                const customerInfo = `
+                    <div class="customer-info">
+                        <strong>👤 Your Account Profile (Fictional Data)</strong><br>
+                        <strong>Name:</strong> ${customer.first_name} ${customer.last_name}<br>
+                        <strong>Account Type:</strong> ${customer.account_type}<br>
+                        <strong>Account Status:</strong> ${customer.account_status}<br>
+                        <strong>Current Balance:</strong> $${customer.balance.toLocaleString()}<br>
+                        <strong>Credit Score:</strong> ${customer.credit_score}<br>
+                        <strong>Risk Level:</strong> ${customer.risk_level}<br>
+                        <strong>Account Opened:</strong> ${customer.account_opened_date}<br>
+                        <strong>Last Transaction:</strong> ${customer.last_transaction_date}<br>
+                        <strong>Preferred Contact:</strong> ${customer.preferred_contact_method}<br>
+                        <strong>Common Issues:</strong> ${customer.common_issues}<br>
+                        <strong>Has Loans:</strong> ${customer.has_loans}<br>
+                        ${customer.has_loans === 'yes' ? 
+                            `<strong>Loan Type:</strong> ${customer.loan_types}<br>
+                             <strong>Loan Amount:</strong> $${customer.loan_amounts.toLocaleString()}<br>
+                             <strong>Monthly Payment:</strong> $${customer.monthly_payments.toLocaleString()}<br>
+                             <strong>Interest Rate:</strong> ${customer.interest_rate}%` : 
+                            'No active loans'
+                        }
+                    </div>
+                    <div class="privacy-warning">
+                        <strong>⚠️ Privacy Notice:</strong> This is fictional demo data only. No real customer information is displayed.
+                    </div>
+                `;
+                
+                addMessage(customerInfo, 'bot');
+                
+            } catch (error) {
+                addMessage('❌ Error loading customer data: ' + error.message, 'bot');
+            }
+        }
+
+        // Show current customer's loan information
+        async function showMyLoan() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customer/my-loan`, {
+                    credentials: 'include'
+                });
+                const loanData = await response.json();
+                
+                if (loanData.error) {
+                    addMessage('❌ Error loading loan data: ' + loanData.error, 'bot');
+                    return;
+                }
+                
+                if (loanData.has_loan) {
+                    const loanInfo = `
+                        <div class="customer-info">
+                            <strong>💰 Your Loan Information (Fictional Data)</strong><br><br>
+                            <strong>Loan Type:</strong> ${loanData.loan_type.replace('_', ' ').toUpperCase()}<br>
+                            <strong>Loan Amount:</strong> $${loanData.loan_amount.toLocaleString()}<br>
+                            <strong>Monthly Payment:</strong> $${loanData.monthly_payment.toLocaleString()}<br>
+                            <strong>Interest Rate:</strong> ${loanData.interest_rate}%<br><br>
+                            <strong>Payment Summary:</strong><br>
+                            • Monthly payment due: $${loanData.monthly_payment.toLocaleString()}<br>
+                            • Total remaining: $${loanData.loan_amount.toLocaleString()}<br>
+                            • Interest rate: ${loanData.interest_rate}%
+                        </div>
+                        <div class="privacy-warning">
+                            <strong>⚠️ Privacy Notice:</strong> This is fictional demo data only. No real loan information is displayed.
+                        </div>
+                    `;
+                    addMessage(loanInfo, 'bot');
+                } else {
+                    addMessage(`<div class="customer-info"><strong>💰 Loan Information</strong><br><br>${loanData.message}</div>`, 'bot');
+                }
+                
+            } catch (error) {
+                addMessage('❌ Error loading loan data: ' + error.message, 'bot');
+            }
+        }
+
+        // Demo customer lookup function (for admin/banker users)
+        async function showDemoCustomer() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customer/random`, {
+                    credentials: 'include'
+                });
+                const customer = await response.json();
+                
+                if (customer.error) {
+                    addMessage('❌ Error loading customer data: ' + customer.error, 'bot');
+                    return;
+                }
+                
+                const customerInfo = `
+                    <div class="customer-info">
+                        <strong>📋 Demo Customer Profile (Fictional Data)</strong><br>
+                        <strong>Name:</strong> ${customer.first_name} ${customer.last_name}<br>
+                        <strong>Account Type:</strong> ${customer.account_type}<br>
+                        <strong>Balance:</strong> $${customer.balance.toLocaleString()}<br>
+                        <strong>Credit Score:</strong> ${customer.credit_score}<br>
+                        <strong>Risk Level:</strong> ${customer.risk_level}<br>
+                        <strong>Has Loans:</strong> ${customer.has_loans}<br>
+                        ${customer.has_loans === 'yes' ? 
+                            `<strong>Loan Type:</strong> ${customer.loan_types}<br>
+                             <strong>Loan Amount:</strong> $${customer.loan_amounts.toLocaleString()}<br>
+                             <strong>Monthly Payment:</strong> $${customer.monthly_payments.toLocaleString()}` : 
+                            'No active loans'
+                        }
+                    </div>
+                    <div class="privacy-warning">
+                        <strong>⚠️ Privacy Notice:</strong> This is fictional demo data only. No real customer information is displayed.
+                    </div>
+                `;
+                
+                addMessage(customerInfo, 'bot');
+                
+            } catch (error) {
+                addMessage('❌ Error loading customer data: ' + error.message, 'bot');
+            }
+        }
+
+        // Show statistics function
+        async function showStats() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customer/stats`, {
+                    credentials: 'include'
+                });
+                const stats = await response.json();
+                
+                if (stats.error) {
+                    addMessage('❌ Error loading statistics: ' + stats.error, 'bot');
+                    return;
+                }
+                
+                const statsInfo = `
+                    <div class="customer-info">
+                        <strong>📊 Customer Data Statistics (Fictional)</strong><br><br>
+                        <strong>Total Customers:</strong> ${stats.total_customers}<br>
+                        <strong>Customers with Loans:</strong> ${stats.customers_with_loans} (${stats.loan_percentage}%)<br>
+                        <strong>Customers without Loans:</strong> ${stats.customers_without_loans} (${100 - stats.loan_percentage}%)<br>
+                        <strong>Average Credit Score:</strong> ${stats.average_credit_score}<br>
+                        <strong>Average Account Balance:</strong> $${stats.average_balance.toLocaleString()}<br>
+                        <strong>Average Loan Amount:</strong> $${stats.average_loan_amount.toLocaleString()}<br><br>
+                        <strong>Loan Type Distribution:</strong><br>
+                        ${Object.entries(stats.loan_types).map(([type, count]) => 
+                            `• ${type.replace('_', ' ').toUpperCase()}: ${count} customers`
+                        ).join('<br>')}<br><br>
+                        <strong>Account Type Distribution:</strong><br>
+                        ${Object.entries(stats.account_types).map(([type, count]) => 
+                            `• ${type.replace('_', ' ').toUpperCase()}: ${count} customers`
+                        ).join('<br>')}
+                    </div>
+                    <div class="privacy-warning">
+                        <strong>⚠️ Privacy Notice:</strong> All statistics are based on fictional demo data only.
+                    </div>
+                `;
+                
+                addMessage(statsInfo, 'bot');
+                
+            } catch (error) {
+                addMessage('❌ Error loading statistics: ' + error.message, 'bot');
+            }
+        }
+
+        // Search customers function
+        async function showSearchDialog() {
+            const query = prompt('Enter search term (name, email, loan type, etc.):');
+            if (!query) return;
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customer/search?q=${encodeURIComponent(query)}`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.count === 0) {
+                    addMessage(`🔍 No customers found matching "${query}"`, 'bot');
+                    return;
+                }
+                
+                let searchResults = `<div class="customer-info"><strong>🔍 Search Results for "${query}"</strong><br><br>`;
+                
+                data.results.forEach((customer, index) => {
+                    searchResults += `
+                        <strong>${index + 1}. ${customer.first_name} ${customer.last_name}</strong><br>
+                        Account: ${customer.account_type} | Balance: $${customer.balance.toLocaleString()}<br>
+                        Credit Score: ${customer.credit_score} | Risk: ${customer.risk_level}<br>
+                        ${customer.has_loans === 'yes' ? `Loan: ${customer.loan_types} ($${customer.loan_amounts.toLocaleString()})` : 'No loans'}<br><br>
+                    `;
+                });
+                
+                searchResults += `</div><div class="privacy-warning"><strong>⚠️ Privacy Notice:</strong> All data shown is fictional demo data only.</div>`;
+                
+                addMessage(searchResults, 'bot');
+                
+            } catch (error) {
+                addMessage('❌ Error searching customers: ' + error.message, 'bot');
+            }
+        }
+
+        // Loan calculator function
+        async function showLoanCalculator() {
+            const principal = prompt('Enter loan amount ($):');
+            if (!principal) return;
+            
+            const rate = prompt('Enter annual interest rate (%):');
+            if (!rate) return;
+            
+            const years = prompt('Enter loan term (years):');
+            if (!years) return;
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/loan/calculate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        principal: parseFloat(principal),
+                        rate: parseFloat(rate),
+                        years: parseInt(years)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    addMessage('❌ Calculation error: ' + data.error, 'bot');
+                    return;
+                }
+                
+                const calcInfo = `
+                    <div class="customer-info">
+                        <strong>💰 Loan Payment Calculator</strong><br><br>
+                        <strong>Loan Amount:</strong> $${data.principal.toLocaleString()}<br>
+                        <strong>Annual Rate:</strong> ${data.annual_rate}%<br>
+                        <strong>Term:</strong> ${data.years} years<br><br>
+                        <strong>Monthly Payment:</strong> $${data.monthly_payment.toLocaleString()}<br>
+                        <strong>Total Payment:</strong> $${data.total_payment.toLocaleString()}<br>
+                        <strong>Total Interest:</strong> $${data.total_interest.toLocaleString()}<br>
+                    </div>
+                `;
+                
+                addMessage(calcInfo, 'bot');
+                
+            } catch (error) {
+                addMessage('❌ Error calculating loan: ' + error.message, 'bot');
+            }
+        }
+
+        // Clear chat function
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                chatMessages.innerHTML = '';
+                messageHistory = [];
+                
+                // Add welcome message back
+                addMessage(`Hello! 🤗 Welcome to your customer dashboard. I can help you with your banking questions and provide personalized insights based on your account information (using fictional data for demonstration). 
+
+<div class="privacy-warning">
+<strong>Privacy Notice:</strong> I will never ask for or display real personal information. All customer data shown is fictional and for demonstration purposes only.
+</div>
+
+<strong>Quick Actions:</strong>
+• Click "My Profile" to see your account details
+• Click "My Loan" to view your loan information (if applicable)
+• Use the sidebar for quick actions
+• Try keyboard shortcuts for faster navigation
+
+What can I help you with today?`, 'bot');
+                
+                // Reset message count
+                updateMessageCount();
+            }
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (sessionTimer) {
+                clearInterval(sessionTimer);
+            }
+        });
+
+        // Focus input on load
+        chatInput.focus();
+    </script>
+</body>
+</html> 
+</html> 
