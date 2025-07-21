@@ -663,7 +663,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <div style="text-align: center; margin-bottom: 10px;">
-                    <img src="Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank Logo" style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px;">
+                    <img src="images/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank Logo" style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px;">
                 </div>
                 <h1>Customer</h1>
                 <p>Professional Dashboard</p>
@@ -680,10 +680,10 @@
 
             <div class="quick-actions">
                 <h3>🚀 Quick Actions</h3>
-                <button class="action-button" onclick="showMyProfile()">
+                <button class="action-button" id="profileButton" onclick="showMyProfile()" style="display: none;">
                     <span class="icon">👤</span> My Profile
                 </button>
-                <button class="action-button" onclick="showMyLoan()">
+                <button class="action-button" id="loanButton" onclick="showMyLoan()" style="display: none;">
                     <span class="icon">💰</span> My Loan
                 </button>
                 <button class="action-button" onclick="window.location.href='loan-calculator.html'">
@@ -742,31 +742,7 @@
                 </div>
             </div>
             
-            <div class="security-notice">
-                🔒 This is a demo system. All customer data is fictional and for testing purposes only.
-            </div>
-            
             <div class="chat-messages" id="chatMessages">
-                <div class="message bot">
-                    <div class="message-avatar">
-                <img src="Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
-            </div>
-                    <div class="message-content">
-                        Hello! 🤗 Welcome to your customer dashboard. I can help you with your banking questions and provide personalized insights based on your account information (using fictional data for demonstration). 
-
-                        <div class="privacy-warning">
-                            <strong>Privacy Notice:</strong> I will never ask for or display real personal information. All customer data shown is fictional and for demonstration purposes only.
-                        </div>
-
-                        <strong>Quick Actions:</strong>
-                        • Click "My Profile" to see your account details
-                        • Click "My Loan" to view your loan information (if applicable)
-                        • Use the sidebar for quick actions
-                        • Try keyboard shortcuts for faster navigation
-
-                        What can I help you with today?
-                    </div>
-                </div>
             </div>
             
             <div class="typing-indicator" id="typingIndicator">
@@ -858,22 +834,32 @@
                         userName.textContent = data.user.name;
                         userRole.textContent = data.user.role;
                         
-                        // Show admin button if user is admin
+                        // Show/hide buttons based on user role
                         if (data.user.role === 'admin') {
+                            // Admin users: show admin dashboard, hide profile/loan buttons
                             document.getElementById('adminButton').style.display = 'block';
+                            document.getElementById('profileButton').style.display = 'none';
+                            document.getElementById('loanButton').style.display = 'none';
+                            document.getElementById('customerActions').style.display = 'none';
+                        } else {
+                            // Non-admin users: show profile/loan buttons, hide admin dashboard
+                            document.getElementById('adminButton').style.display = 'none';
+                            document.getElementById('profileButton').style.display = 'block';
+                            document.getElementById('loanButton').style.display = 'block';
+                            document.getElementById('customerActions').style.display = 'block';
                         }
                     } else {
                         // User is not authenticated, redirect to login
-                        window.location.href = '/';
+                        window.location.href = '/login.html';
                     }
                 } else {
                     // Error checking auth status, redirect to login
-                    window.location.href = '/';
+                    window.location.href = '/login.html';
                 }
             } catch (error) {
                 console.error('Auth check error:', error);
                 // Connection error, redirect to login
-                window.location.href = '/';
+                window.location.href = '/login.html';
             }
         }
 
@@ -890,14 +876,14 @@
                 
                 if (response.ok) {
                     // Redirect to login page
-                    window.location.href = '/';
+                    window.location.href = '/login.html';
                 } else {
                     console.error('Logout failed');
                 }
             } catch (error) {
                 console.error('Logout error:', error);
                 // Redirect to login page anyway
-                window.location.href = '/';
+                window.location.href = '/login.html';
             }
         }
 
@@ -1016,7 +1002,7 @@
             } else {
                 // Create image element for bank logo
                 const bankImg = document.createElement('img');
-                bankImg.src = 'Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png';
+                bankImg.src = 'images/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png';
                 bankImg.alt = 'Bank';
                 bankImg.style.width = '100%';
                 bankImg.style.height = '100%';
@@ -1061,7 +1047,7 @@
             }
         }
 
-        // Current customer profile function
+        // Current customer profile function (for non-admin users)
         async function showMyProfile() {
             try {
                 const response = await fetch(`${BACKEND_URL}/api/customer/current`, {
@@ -1108,7 +1094,7 @@
             }
         }
 
-        // Show current customer's loan information
+        // Show current customer's loan information (for non-admin users)
         async function showMyLoan() {
             try {
                 const response = await fetch(`${BACKEND_URL}/api/customer/my-loan`, {
@@ -1326,17 +1312,11 @@
                 messageHistory = [];
                 
                 // Add welcome message back
-                addMessage(`Hello! 🤗 Welcome to your customer dashboard. I can help you with your banking questions and provide personalized insights based on your account information (using fictional data for demonstration). 
+                addMessage(`Hello! 🤗 Welcome to your customer dashboard. I can help you with your banking questions and provide personalized insights based on your account information. 
 
 <div class="privacy-warning">
 <strong>Privacy Notice:</strong> I will never ask for or display real personal information. All customer data shown is fictional and for demonstration purposes only.
 </div>
-
-<strong>Quick Actions:</strong>
-• Click "My Profile" to see your account details
-• Click "My Loan" to view your loan information (if applicable)
-• Use the sidebar for quick actions
-• Try keyboard shortcuts for faster navigation
 
 What can I help you with today?`, 'bot');
                 

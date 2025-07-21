@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# Logs
+*.log
+BE/logs/
+
+# Data backups
+data/backups/
+
+# Session files
+session=*
+
+# Cookies
+cookies.txt
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

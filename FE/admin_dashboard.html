@@ -404,7 +404,7 @@
     <div class="admin-container">
         <div class="admin-header">
             <div class="header-left">
-                <img src="Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank Logo">
+                <img src="images/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank Logo">
                 <div>
                     <h1>Admin Dashboard</h1>
                     <p>Customer Management System</p>
@@ -523,14 +523,14 @@
                         }
                         document.getElementById('userInfo').textContent = `Welcome, ${data.user.name}`;
                     } else {
-                        window.location.href = '/';
+                        window.location.href = '/login.html';
                     }
                 } else {
-                    window.location.href = '/';
+                    window.location.href = '/login.html';
                 }
             } catch (error) {
                 console.error('Auth check error:', error);
-                window.location.href = '/';
+                window.location.href = '/login.html';
             }
         }
 
@@ -750,10 +750,10 @@
                     method: 'POST',
                     credentials: 'include'
                 });
-                window.location.href = '/';
+                window.location.href = '/login.html';
             } catch (error) {
                 console.error('Logout error:', error);
-                window.location.href = '/';
+                window.location.href = '/login.html';
             }
         }
 

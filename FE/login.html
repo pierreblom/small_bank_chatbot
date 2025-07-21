@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Je persoonlijke spaarvarken - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        #logo-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #logo-container img {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            object-fit: contain;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #fcc;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+
+
+        .security-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .forgot-password-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .forgot-password-link a:hover {
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .modal-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .back-button {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .back-button:hover {
+            background: #7f8c8d;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                width: 95%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div id="logo-container"></div>
+            <h1>Je persoonlijke spaarvarken</h1>
+            <p>Secure login to access your banking companion</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="mainSuccessMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button type="submit" class="login-button" id="loginButton">
+                Sign In
+            </button>
+        </form>
+
+        <div class="loading" id="loading"></div>
+
+        <div class="forgot-password-link">
+            <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+        </div>
+
+
+
+        <div class="security-notice">
+            🔒 This is a demo system. All credentials are for testing purposes only.
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="passwordResetModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <p>Follow the steps to reset your password</p>
+            </div>
+
+            <!-- Step 1: Enter Username -->
+            <div id="step1" class="step active">
+                <div class="form-group">
+                    <label for="resetUsername">Username</label>
+                    <input type="text" id="resetUsername" placeholder="Enter your username" required>
+                </div>
+                <button type="button" class="login-button" id="nextStep1">Continue</button>
+            </div>
+
+            <!-- Step 2: Security Question -->
+            <div id="step2" class="step">
+                <div class="form-group">
+                    <label id="securityQuestionLabel">Security Question</label>
+                    <input type="text" id="securityAnswer" placeholder="Enter your answer" required>
+                </div>
+                <button type="button" class="back-button" id="backStep2">Back</button>
+                <button type="button" class="login-button" id="nextStep2">Verify</button>
+            </div>
+
+            <!-- Step 3: New Password -->
+            <div id="step3" class="step">
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password (min 6 characters)" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+                </div>
+                <button type="button" class="back-button" id="backStep3">Back</button>
+                <button type="button" class="login-button" id="resetPasswordBtn">Reset Password</button>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="success-message">
+                Password reset successfully! You can now log in with your new password.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:5001';
+        
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const mainSuccessMessage = document.getElementById('mainSuccessMessage');
+        const loading = document.getElementById('loading');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Check if user is already logged in (with a small delay to ensure session is established)
+        setTimeout(checkAuthStatus, 100);
+
+        loginForm.addEventListener('submit', handleLogin);
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/status`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        // User is already logged in, redirect to main app
+                        window.location.href = '/chat';
+                    }
+                }
+            } catch (error) {
+                console.log('Not authenticated, showing login form');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+            
+            // Show loading state
+            setLoadingState(true);
+            hideError();
+            hideSuccessMessage();
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Login successful
+                    console.log('Login successful:', data.user);
+                    
+                    // Redirect to main application
+                    window.location.href = '/chat';
+                } else {
+                    // Login failed
+                    showError(data.error || 'Login failed. Please check your credentials.');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Connection error. Please check if the backend is running.');
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            mainSuccessMessage.style.display = 'none';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function showSuccessMessage(message) {
+            mainSuccessMessage.textContent = message;
+            mainSuccessMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        function hideSuccessMessage() {
+            mainSuccessMessage.style.display = 'none';
+        }
+
+        function setLoadingState(loading) {
+            if (loading) {
+                loginButton.disabled = true;
+                loginButton.textContent = 'Signing In...';
+                document.getElementById('loading').style.display = 'block';
+            } else {
+                loginButton.disabled = false;
+                loginButton.textContent = 'Sign In';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Load logo
+        const logoContainer = document.getElementById('logo-container');
+        
+        // Create image element for custom bank logo
+        const logoImg = document.createElement('img');
+        logoImg.src = 'images/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png';
+        logoImg.alt = 'Bank Logo';
+        logoImg.title = 'Small Bank';
+        
+        logoContainer.appendChild(logoImg);
+
+        // Focus username field on load
+        usernameInput.focus();
+
+        // Password Reset Modal Functionality
+        const modal = document.getElementById('passwordResetModal');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const closeModal = document.getElementById('closeModal');
+        const resetUsername = document.getElementById('resetUsername');
+        const securityAnswer = document.getElementById('securityAnswer');
+        const newPassword = document.getElementById('newPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const securityQuestionLabel = document.getElementById('securityQuestionLabel');
+        const successMessage = document.getElementById('successMessage');
+
+        let currentStep = 1;
+        let resetToken = '';
+        let currentUsername = '';
+
+        // Modal controls
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'block';
+            resetUsername.focus();
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            resetModal();
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                resetModal();
+            }
+        });
+
+        function resetModal() {
+            currentStep = 1;
+            resetToken = '';
+            currentUsername = '';
+            showStep(1);
+            resetUsername.value = '';
+            securityAnswer.value = '';
+            newPassword.value = '';
+            confirmPassword.value = '';
+            successMessage.style.display = 'none';
+            hideError();
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+        }
+
+        // Step 1: Enter username and get security question
+        document.getElementById('nextStep1').addEventListener('click', async () => {
+            const username = resetUsername.value.trim();
+            if (!username) {
+                showError('Please enter a username');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/get-security-question?username=${encodeURIComponent(username)}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUsername = username;
+                    securityQuestionLabel.textContent = data.security_question;
+                    showStep(2);
+                    securityAnswer.focus();
+                } else {
+                    showError(data.error || 'User not found');
+                }
+            } catch (error) {
+                showError('Connection error. Please try again.');
+            }
+        });
+
+        // Step 2: Verify security question
+        document.getElementById('nextStep2').addEventListener('click', async () => {
+            const answer = securityAnswer.value.trim();
+            if (!answer) {
+                showError('Please enter your answer');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/verify-security-question`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: currentUsername,
+                        answer: answer
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Get reset token
+                    const tokenResponse = await fetch(`${BACKEND_URL}/api/auth/forgot-password`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            username: currentUsername
+                        })
+                    });
+
+                    const tokenData = await tokenResponse.json();
+
+                    if (tokenResponse.ok) {
+                        resetToken = tokenData.reset_token;
+                        showStep(3);
+                        newPassword.focus();
+                    } else {
+                        showError(tokenData.error || 'Failed to generate reset token');
+                    }
+                } else {
+                    showError(data.error || 'Incorrect answer');
+                }
+            } catch (error) {
+                showError('Connection error. Please try again.');
+            }
+        });
+
+        // Step 3: Set new password
+        document.getElementById('resetPasswordBtn').addEventListener('click', async () => {
+            const password = newPassword.value.trim();
+            const confirm = confirmPassword.value.trim();
+
+            if (!password || !confirm) {
+                showError('Please enter both passwords');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters long');
+                return;
+            }
+
+            if (password !== confirm) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/reset-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: currentUsername,
+                        token: resetToken,
+                        new_password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successMessage.style.display = 'block';
+                    document.querySelectorAll('.step').forEach(s => s.style.display = 'none');
+                    
+                    // Close modal after 3 seconds and clear login form
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        resetModal();
+                        
+                        // Clear the main login form
+                        usernameInput.value = '';
+                        passwordInput.value = '';
+                        
+                        // Show success message on main page
+                        showSuccessMessage('Password reset successfully! You can now log in with your new password.');
+                        
+                        // Focus on username field
+                        usernameInput.focus();
+                    }, 3000);
+                } else {
+                    showError(data.error || 'Failed to reset password');
+                }
+            } catch (error) {
+                showError('Connection error. Please try again.');
+            }
+        });
+
+        // Back buttons
+        document.getElementById('backStep2').addEventListener('click', () => {
+            showStep(1);
+            resetUsername.focus();
+        });
+
+        document.getElementById('backStep3').addEventListener('click', () => {
+            showStep(2);
+            securityAnswer.focus();
+        });
+
+        // Enter key support
+        resetUsername.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('nextStep1').click();
+            }
+        });
+
+        securityAnswer.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('nextStep2').click();
+            }
+        });
+
+        newPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('resetPasswordBtn').click();
+            }
+        });
+
+        confirmPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('resetPasswordBtn').click();
+            }
+        });
+    </script>
+</body>
+</html> 

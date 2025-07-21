@@ -1,0 +1,52 @@
+customer_id,first_name,last_name,email,phone,username,password_hash,security_question,security_answer,preferred_contact_method,risk_level,account_opened_date
+CUST001,John,Smith,john.smith@email.com,555-0101,johnsmith,p,What was your first pet's name?,Fluffy,email,low,2020-03-12
+CUST002,Sarah,Johnson,sarah.j@email.com,555-0102,sarahjohnson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Chicago,phone,low,2018-07-22
+CUST003,Michael,Brown,mike.brown@email.com,555-0103,michaelbrown,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Johnson,email,medium,2021-11-08
+CUST004,Emily,Davis,emily.davis@email.com,555-0104,emilydavis,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Buddy,text,low,2019-05-30
+CUST005,David,Wilson,david.w@email.com,555-0105,davidwilson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Buddy,phone,low,2017-09-14
+CUST006,Lisa,Anderson,lisa.a@email.com,555-0106,lisaanderson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite color?,Bella,email,high,2022-02-28
+CUST007,Robert,Taylor,rob.taylor@email.com,555-0107,roberttaylor,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your first pet's name?,Fluffy,phone,low,2020-12-03
+CUST008,Jennifer,Martinez,jen.m@email.com,555-0108,jennifermartinez,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,medium,2021-06-17
+CUST009,Christopher,Lee,chris.lee@email.com,555-0109,christopherlee,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,text,low,2018-11-25
+CUST010,Amanda,White,amanda.w@email.com,555-0110,amandawhite,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your childhood nickname?,Charlie,email,medium,2023-01-20
+CUST011,James,Miller,james.m@email.com,555-0111,jamesmiller,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your first pet's name?,Fluffy,phone,low,2016-04-12
+CUST012,Jessica,Garcia,jessica.g@email.com,555-0112,jessicagarcia,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,email,low,2020-08-30
+CUST013,Daniel,Rodriguez,dan.r@email.com,555-0113,danielrodriguez,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Max,phone,medium,2022-05-15
+CUST014,Ashley,Lopez,ashley.l@email.com,555-0114,ashleylopez,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first teacher?,Milo,email,medium,2021-12-10
+CUST015,Matthew,Hall,matt.hall@email.com,555-0115,matthewhall,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,text,low,2019-03-08
+CUST016,Nicole,Young,nicole.y@email.com,555-0116,nicleyoung,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Max,email,low,2020-10-22
+CUST017,Kevin,Allen,kevin.a@email.com,555-0117,kevinallen,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,phone,low,2018-12-05
+CUST018,Rachel,King,rachel.k@email.com,555-0118,rachelking,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,email,low,2019-07-18
+CUST019,Steven,Wright,steve.w@email.com,555-0119,stevenwright,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the make of your first car?,Rocky,email,high,2023-03-14
+CUST020,Michelle,Scott,michelle.s@email.com,555-0120,michellescott,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite food?,Lucy,email,low,2021-04-09
+CUST021,Andrew,Green,andrew.g@email.com,555-0121,andrewgreen,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite color?,Bella,text,low,2018-06-12
+CUST022,Stephanie,Baker,steph.b@email.com,555-0122,stephaniebaker,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,phone,low,2020-01-28
+CUST023,Ryan,Adams,ryan.a@email.com,555-0123,ryanadams,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,medium,2022-07-03
+CUST024,Lauren,Nelson,lauren.n@email.com,555-0124,laurennelson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your childhood nickname?,Charlie,phone,low,2017-11-20
+CUST025,Jason,Carter,jason.c@email.com,555-0125,jasoncarter,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite color?,Bella,email,medium,2023-02-11
+CUST026,Amber,Mitchell,amber.m@email.com,555-0126,ambermitchell,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite food?,Lucy,email,low,2021-09-16
+CUST027,Brandon,Perez,brandon.p@email.com,555-0127,brandonperez,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Max,text,low,2019-10-05
+CUST028,Melissa,Roberts,melissa.r@email.com,555-0128,melissaroberts,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the make of your first car?,Rocky,phone,low,2020-05-30
+CUST029,Justin,Turner,justin.t@email.com,555-0129,justinturner,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your first pet's name?,Fluffy,email,medium,2022-11-07
+CUST030,Danielle,Phillips,danielle.p@email.com,555-0130,daniellephillips,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Max,phone,low,2018-08-14
+CUST031,Travis,Campbell,travis.c@email.com,555-0131,traviscampbell,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite color?,Bella,email,low,2021-01-25
+CUST032,Heather,Parker,heather.p@email.com,555-0132,heatherparker,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,low,2019-12-08
+CUST033,Corey,Evans,corey.e@email.com,555-0133,coreyevans,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,text,low,2018-04-22
+CUST034,Christina,Edwards,christina.e@email.com,555-0134,christinaedwards,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first teacher?,Milo,email,low,2020-07-19
+CUST035,Mark,Collins,mark.c@email.com,555-0135,markcollins,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite color?,Bella,email,high,2023-05-02
+CUST036,Angela,Stewart,angela.s@email.com,555-0136,angelastewart,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Max,phone,low,2017-03-15
+CUST037,Timothy,Sanchez,tim.s@email.com,555-0137,timothysanchez,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Buddy,email,low,2021-08-12
+CUST038,Natalie,Morris,natalie.m@email.com,555-0138,nataliemorris,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the make of your first car?,Rocky,email,low,2022-04-28
+CUST039,Jeffrey,Rogers,jeff.r@email.com,555-0139,jeffreyrogers,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,text,low,2019-01-17
+CUST040,Lindsay,Reed,lindsay.r@email.com,555-0140,lindsayreed,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your first pet's name?,Fluffy,email,low,2020-11-03
+CUST041,Sean,Cook,sean.c@email.com,555-0141,seancook,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Buddy,phone,low,2018-06-25
+CUST042,Vanessa,Morgan,vanessa.m@email.com,555-0142,vanessamorgan,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,low,2019-09-14
+CUST043,Adam,Bell,adam.b@email.com,555-0143,adambell,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Max,email,medium,2023-01-08
+CUST044,Crystal,Murphy,crystal.m@email.com,555-0144,crystalmurphy,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite food?,Lucy,email,low,2021-05-21
+CUST045,Paul,Bailey,paul.b@email.com,555-0145,paulbailey,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,text,low,2018-12-30
+CUST046,Monica,Rivera,monica.r@email.com,555-0146,monicarivera,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the make of your first car?,Rocky,phone,low,2020-02-11
+CUST047,Keith,Cooper,keith.c@email.com,555-0147,keithcooper,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,email,medium,2022-08-16
+CUST048,Stacy,Richardson,stacy.r@email.com,555-0148,stacyrichardson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first teacher?,Milo,phone,low,2017-05-08
+CUST049,Derrick,Cox,derrick.c@email.com,555-0149,derrickcox,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,medium,2023-04-19
+CUST050,Whitney,Ward,whitney.w@email.com,555-0150,whitneyward,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,low,2021-10-07
+ADMIN001,Admin,User,admin@bank.com,555-0000,admin,admin123,What is your favorite food?,Lucy,email,low,2020-01-01

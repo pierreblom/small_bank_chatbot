@@ -1,0 +1,11 @@
+{
+  "app_name": "Banking Chatbot",
+  "version": "1.0.0",
+  "debug": true,
+  "host": "localhost",
+  "port": 5000,
+  "database": {
+    "type": "csv",
+    "path": "../data/"
+  }
+}

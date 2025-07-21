@@ -10,19 +10,29 @@ from typing import Dict, List, Optional
 import logging
 import hashlib
 import secrets
+import uuid
+from datetime import datetime, timedelta
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)  # Generate a secure secret key
-CORS(app, supports_credentials=True)  # Enable CORS with credentials
+app.secret_key = "your-secret-key-here"  # Use a consistent secret key for session management
+app.config['SESSION_COOKIE_SECURE'] = False  # Allow HTTP for development
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)  # Session expires in 24 hours
+CORS(app, 
+     supports_credentials=True,  # Enable CORS with credentials
+     origins=["http://localhost:5000", "http://127.0.0.1:5000", "http://localhost:5001", "http://127.0.0.1:5001"],
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 # Configuration
 OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
 MODEL_NAME = "llama3"
-CSV_FILE = "banking_customers.csv"
+CSV_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "banking_customers.csv")
 
 # User database (in production, this would be a real database)
 # Keep the hardcoded users as fallback
@@ -91,6 +101,95 @@ def validate_customer_login(username: str, password: str) -> Optional[Dict]:
                     "customer_data": customer
                 }
     return None
+
+def get_customer_by_username(username: str) -> Optional[Dict]:
+    """Get customer data by username"""
+    customers = load_customer_data()
+    for customer in customers:
+        if customer['username'] == username:
+            return customer
+    return None
+
+def update_customer_password(username: str, new_password: str) -> bool:
+    """Update customer password in CSV"""
+    try:
+        # Read all customers
+        customers = []
+        with open(CSV_FILE, 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if row['username'] == username:
+                    # Update password hash
+                    row['password_hash'] = hashlib.sha256(new_password.encode()).hexdigest()
+                    # Clear reset token
+                    row['reset_token'] = ''
+                    row['reset_token_expiry'] = ''
+                customers.append(row)
+        
+        # Write back to CSV
+        with open(CSV_FILE, 'w', newline='', encoding='utf-8') as file:
+            if customers:
+                fieldnames = customers[0].keys()
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(customers)
+        
+        logger.info(f"Password updated for user {username}")
+        return True
+    except Exception as e:
+        logger.error(f"Error updating password for {username}: {e}")
+        return False
+
+def generate_reset_token(username: str) -> Optional[str]:
+    """Generate a password reset token for a user"""
+    try:
+        # Read all customers
+        customers = []
+        with open(CSV_FILE, 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if row['username'] == username:
+                    # Generate reset token and expiry
+                    reset_token = str(uuid.uuid4())
+                    expiry = (datetime.now() + timedelta(hours=1)).isoformat()
+                    row['reset_token'] = reset_token
+                    row['reset_token_expiry'] = expiry
+                customers.append(row)
+        
+        # Write back to CSV
+        with open(CSV_FILE, 'w', newline='', encoding='utf-8') as file:
+            if customers:
+                fieldnames = customers[0].keys()
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(customers)
+        
+        logger.info(f"Reset token generated for user {username}")
+        return reset_token
+    except Exception as e:
+        logger.error(f"Error generating reset token for {username}: {e}")
+        return None
+
+def validate_reset_token(username: str, token: str) -> bool:
+    """Validate a password reset token"""
+    customer = get_customer_by_username(username)
+    if not customer:
+        return False
+    
+    if not customer.get('reset_token') or not customer.get('reset_token_expiry'):
+        return False
+    
+    if customer['reset_token'] != token:
+        return False
+    
+    try:
+        expiry = datetime.fromisoformat(customer['reset_token_expiry'])
+        if datetime.now() > expiry:
+            return False
+    except:
+        return False
+    
+    return True
 
 # Authentication decorator
 def login_required(f):
@@ -342,26 +441,65 @@ banking_assistant = BankingAssistant()
 
 @app.route('/')
 def index():
+    """Serve the main index page"""
+    try:
+        index_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "index.html")
+        return send_file(index_file_path, mimetype='text/html')
+    except FileNotFoundError:
+        return "Index page not found", 404
+
+@app.route('/login.html')
+def login_page():
     """Serve the login page"""
     try:
-        with open('login.html', 'r', encoding='utf-8') as file:
-            return file.read()
+        login_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "login.html")
+        return send_file(login_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Login page not found", 404
+
+@app.route('/images/<filename>')
+def serve_image(filename):
+    """Serve images from the FE/images directory"""
+    try:
+        image_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "images", filename)
+        return send_file(image_file_path)
+    except FileNotFoundError:
+        return "Image not found", 404
+
+@app.route('/css/<filename>')
+def serve_css(filename):
+    """Serve CSS files from the FE/css directory"""
+    try:
+        css_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "css", filename)
+        return send_file(css_file_path, mimetype='text/css')
+    except FileNotFoundError:
+        return "CSS file not found", 404
+
+@app.route('/js/<filename>')
+def serve_js(filename):
+    """Serve JavaScript files from the FE/js directory"""
+    try:
+        js_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "js", filename)
+        return send_file(js_file_path, mimetype='application/javascript')
+    except FileNotFoundError:
+        return "JavaScript file not found", 404
 
 @app.route('/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png')
 def serve_bank_logo():
     """Serve the bank logo image"""
     try:
-        return send_file('Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png', mimetype='image/png')
+        logo_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "images", "Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png")
+        return send_file(logo_file_path, mimetype='image/png')
     except FileNotFoundError:
         return "Logo not found", 404
 
 @app.route('/loan-calculator.html')
+@login_required
 def loan_calculator():
     """Serve the loan calculator page"""
     try:
-        return send_file('loan-calculator.html', mimetype='text/html')
+        loan_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "loan-calculator.html")
+        return send_file(loan_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Loan calculator not found", 404
 
@@ -370,8 +508,8 @@ def loan_calculator():
 def chat_page():
     """Serve the chat page (requires authentication)"""
     try:
-        with open('small-bank-chat-backend.html', 'r', encoding='utf-8') as file:
-            return file.read()
+        chat_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "small-bank-chat-backend.html")
+        return send_file(chat_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Chat page not found", 404
 
@@ -391,8 +529,18 @@ def admin_page():
         return redirect('/chat')
     
     try:
-        with open('admin_dashboard.html', 'r', encoding='utf-8') as file:
-            return file.read()
+        admin_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "admin_dashboard.html")
+        return send_file(admin_file_path, mimetype='text/html')
+    except FileNotFoundError:
+        return "Admin dashboard not found", 404
+
+@app.route('/admin_dashboard.html')
+@login_required
+def admin_dashboard_page():
+    """Serve the admin dashboard page"""
+    try:
+        admin_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "admin_dashboard.html")
+        return send_file(admin_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Admin dashboard not found", 404
 
@@ -417,6 +565,7 @@ def login():
                 session['user_name'] = USERS[username]['name']
                 
                 logger.info(f"User {username} logged in successfully")
+                logger.info(f"Session after login: {dict(session)}")
                 
                 return jsonify({
                     "success": True,
@@ -436,6 +585,7 @@ def login():
             session['user_name'] = customer_user['name']
             session['customer_data'] = customer_user['customer_data']  # Store customer data in session
             logger.info(f"Customer {username} logged in successfully")
+            logger.info(f"Session after customer login: {dict(session)}")
             return jsonify({
                 "success": True,
                 "message": "Login successful",
@@ -455,13 +605,33 @@ def login():
 @app.route('/api/auth/logout', methods=['POST'])
 def logout():
     """Handle user logout"""
+    logger.info(f"Logout request - Session before: {dict(session)}")
+    
+    # Clear all session data
+    session.pop('user_id', None)
+    session.pop('user_role', None)
+    session.pop('user_name', None)
+    session.pop('customer_data', None)
     session.clear()
-    return jsonify({"success": True, "message": "Logout successful"})
+    
+    logger.info(f"Logout completed - Session after: {dict(session)}")
+    
+    # Create response and set session cookie to expire immediately
+    response = jsonify({"success": True, "message": "Logout successful"})
+    response.delete_cookie('session')
+    response.set_cookie('session', '', expires=0, max_age=0)
+    
+    # Force session to be marked as modified
+    session.modified = True
+    
+    return response
 
 @app.route('/api/auth/status', methods=['GET'])
 def auth_status():
     """Get current authentication status"""
+    logger.info(f"Auth status check - Session: {dict(session)}")
     if 'user_id' in session:
+        logger.info(f"User {session['user_id']} is authenticated")
         return jsonify({
             "authenticated": True,
             "user": {
@@ -471,7 +641,127 @@ def auth_status():
             }
         })
     else:
+        logger.info("No user_id in session - not authenticated")
         return jsonify({"authenticated": False})
+
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def forgot_password():
+    """Handle forgot password request"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        
+        if not username:
+            return jsonify({"error": "Username is required"}), 400
+        
+        # Check if user exists
+        customer = get_customer_by_username(username)
+        if not customer:
+            # Don't reveal if user exists or not for security
+            return jsonify({
+                "success": True,
+                "message": "If the username exists, a reset link has been sent."
+            })
+        
+        # Generate reset token
+        reset_token = generate_reset_token(username)
+        if not reset_token:
+            return jsonify({"error": "Failed to generate reset token"}), 500
+        
+        # In a real application, you would send an email here
+        # For demo purposes, we'll return the token in the response
+        return jsonify({
+            "success": True,
+            "message": "Password reset instructions sent.",
+            "reset_token": reset_token,  # Remove this in production
+            "username": username  # Remove this in production
+        })
+        
+    except Exception as e:
+        logger.error(f"Forgot password error: {e}")
+        return jsonify({"error": "Password reset failed"}), 500
+
+@app.route('/api/auth/verify-security-question', methods=['POST'])
+def verify_security_question():
+    """Verify security question answer"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        answer = data.get('answer', '').strip()
+        
+        if not username or not answer:
+            return jsonify({"error": "Username and answer are required"}), 400
+        
+        customer = get_customer_by_username(username)
+        if not customer:
+            return jsonify({"error": "User not found"}), 404
+        
+        # Check security answer (case-insensitive)
+        if customer.get('security_answer', '').lower() == answer.lower():
+            return jsonify({
+                "success": True,
+                "message": "Security question verified",
+                "security_question": customer.get('security_question', '')
+            })
+        else:
+            return jsonify({"error": "Incorrect answer"}), 401
+        
+    except Exception as e:
+        logger.error(f"Security question verification error: {e}")
+        return jsonify({"error": "Verification failed"}), 500
+
+@app.route('/api/auth/reset-password', methods=['POST'])
+def reset_password():
+    """Reset password using token"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        token = data.get('token', '').strip()
+        new_password = data.get('new_password', '').strip()
+        
+        if not username or not token or not new_password:
+            return jsonify({"error": "Username, token, and new password are required"}), 400
+        
+        if len(new_password) < 6:
+            return jsonify({"error": "Password must be at least 6 characters long"}), 400
+        
+        # Validate token
+        if not validate_reset_token(username, token):
+            return jsonify({"error": "Invalid or expired reset token"}), 401
+        
+        # Update password
+        if update_customer_password(username, new_password):
+            return jsonify({
+                "success": True,
+                "message": "Password reset successfully"
+            })
+        else:
+            return jsonify({"error": "Failed to update password"}), 500
+        
+    except Exception as e:
+        logger.error(f"Password reset error: {e}")
+        return jsonify({"error": "Password reset failed"}), 500
+
+@app.route('/api/auth/get-security-question', methods=['GET'])
+def get_security_question():
+    """Get security question for a username"""
+    try:
+        username = request.args.get('username', '').strip()
+        
+        if not username:
+            return jsonify({"error": "Username is required"}), 400
+        
+        customer = get_customer_by_username(username)
+        if not customer:
+            return jsonify({"error": "User not found"}), 404
+        
+        return jsonify({
+            "security_question": customer.get('security_question', '')
+        })
+        
+    except Exception as e:
+        logger.error(f"Get security question error: {e}")
+        return jsonify({"error": "Failed to get security question"}), 500
 
 @app.route('/api/chat', methods=['POST'])
 @login_required
