@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Customer Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .test-link:hover {
+            background: #5a6fd8;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Customer Profile Test</h1>
+        
+        <div class="info">
+            <p><strong>Instructions:</strong></p>
+            <p>1. Make sure the backend is running on localhost:5001</p>
+            <p>2. Click the links below to test different customer profiles</p>
+            <p>3. You should be redirected to the customer profile page</p>
+        </div>
+
+        <h3>Test Customer Profiles:</h3>
+        
+        <a href="customer_profile.html?id=CUST001" class="test-link">John Smith (CUST001)</a><br>
+        <a href="customer_profile.html?id=CUST002" class="test-link">Sarah Johnson (CUST002)</a><br>
+        <a href="customer_profile.html?id=CUST003" class="test-link">Michael Brown (CUST003)</a><br>
+        <a href="customer_profile.html?id=CUST004" class="test-link">Emily Davis (CUST004)</a><br>
+        <a href="customer_profile.html?id=CUST005" class="test-link">David Wilson (CUST005)</a><br>
+        
+        <h3>Test Invalid Customer:</h3>
+        <a href="customer_profile.html?id=INVALID" class="test-link">Invalid Customer ID</a><br>
+        
+        <h3>Test No ID:</h3>
+        <a href="customer_profile.html" class="test-link">No Customer ID</a><br>
+        
+        <h3>Back to Admin Dashboard:</h3>
+        <a href="admin_dashboard.html" class="test-link">Admin Dashboard</a>
+    </div>
+</body>
+</html> 

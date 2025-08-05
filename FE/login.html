@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Je persoonlijke spaarvarken - Login</title>
     <style>
         * {
@@ -375,6 +378,7 @@
 
     <script>
         const BACKEND_URL = 'http://localhost:5001';
+        const VERSION = '1.0.1'; // Cache busting version
         
         const loginForm = document.getElementById('loginForm');
         const loginButton = document.getElementById('loginButton');
@@ -384,27 +388,17 @@
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
 
-        // Check if user is already logged in (with a small delay to ensure session is established)
-        setTimeout(checkAuthStatus, 100);
+        // No automatic auth check - user must manually login
+        // Remove the checkAuthStatus call completely
+        console.log(`Login page loaded (v${VERSION}) - no automatic auth check`);
+        console.log(`Page loaded at: ${new Date().toISOString()}`);
 
         loginForm.addEventListener('submit', handleLogin);
 
-        async function checkAuthStatus() {
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/auth/status`, {
-                    credentials: 'include'
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.authenticated) {
-                        // User is already logged in, redirect to main app
-                        window.location.href = '/chat';
-                    }
-                }
-            } catch (error) {
-                console.log('Not authenticated, showing login form');
-            }
+        // Authentication check function removed - rely on backend redirects only
+        function checkAuthStatus() {
+            console.log('Authentication check disabled - backend handles all auth redirects');
+            // Do nothing - let the backend handle authentication
         }
 
         async function handleLogin(e) {

@@ -18,11 +18,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.secret_key = "your-secret-key-here"  # Use a consistent secret key for session management
+# Use a fixed secret key for development to prevent session loss on restart
+app.secret_key = 'dev-secret-key-12345'  # Fixed key for development
 app.config['SESSION_COOKIE_SECURE'] = False  # Allow HTTP for development
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)  # Session expires in 24 hours
+app.config['SESSION_COOKIE_DOMAIN'] = None  # Allow localhost
+app.config['SESSION_COOKIE_PATH'] = '/'
 CORS(app, 
      supports_credentials=True,  # Enable CORS with credentials
      origins=["http://localhost:5000", "http://127.0.0.1:5000", "http://localhost:5001", "http://127.0.0.1:5001"],
@@ -31,28 +34,15 @@ CORS(app,
 
 # Configuration
 OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
-MODEL_NAME = "llama3"
-CSV_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "banking_customers.csv")
+MODEL_NAME = "small-bank-chat"
+CSV_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "banking_customers.csv")
 
-# User database (in production, this would be a real database)
-# Keep the hardcoded users as fallback
-USERS = {
-    "admin": {
-        "password": hashlib.sha256("admin123".encode()).hexdigest(),
-        "role": "admin",
-        "name": "Administrator"
-    },
-    "banker": {
-        "password": hashlib.sha256("banker123".encode()).hexdigest(),
-        "role": "banker",
-        "name": "Bank Representative"
-    },
-    "demo": {
-        "password": hashlib.sha256("demo123".encode()).hexdigest(),
-        "role": "user",
-        "name": "Demo User"
-    }
-}
+# Debug: Print the CSV file path to help with troubleshooting
+print(f"CSV file path: {CSV_FILE}")
+print(f"CSV file exists: {os.path.exists(CSV_FILE)}")
+
+# User database is now entirely based on CSV data
+# No hardcoded users - all authentication comes from customer data
 
 # Load customer data from CSV
 def load_customer_data() -> List[Dict]:
@@ -84,15 +74,16 @@ def validate_customer_login(username: str, password: str) -> Optional[Dict]:
     for customer in customers:
         if customer['username'] == username:
             # Hash the input password and compare with stored hash
-            # For demo purposes, we'll use a simple approach
-            # In production, you'd use proper password hashing like bcrypt
             hashed_input = hashlib.sha256(password.encode()).hexdigest()
             
-            # For demo, we'll also accept the password directly if it matches a pattern
-            # This allows using the password_hash from CSV as the password
+            # Check if password matches (either hashed or plain text for demo)
+            # In production, you'd use proper password hashing like bcrypt
             if customer['password_hash'] == hashed_input or customer['password_hash'] == password:
                 # Determine role based on account_type
                 role = "admin" if customer['account_type'] == 'admin' else "customer"
+                
+                # Log successful login for security monitoring
+                logger.info(f"Successful login for user: {username} (role: {role})")
                 
                 return {
                     "username": customer['username'],
@@ -100,6 +91,10 @@ def validate_customer_login(username: str, password: str) -> Optional[Dict]:
                     "name": f"{customer['first_name']} {customer['last_name']}",
                     "customer_data": customer
                 }
+            else:
+                # Log failed login attempt for security monitoring
+                logger.warning(f"Failed login attempt for user: {username}")
+    
     return None
 
 def get_customer_by_username(username: str) -> Optional[Dict]:
@@ -193,10 +188,37 @@ def validate_reset_token(username: str, token: str) -> bool:
 
 # Authentication decorator
 def login_required(f):
-    """Decorator to require login for protected routes"""
+    """Decorator to require login for protected API routes"""
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
+            logger.warning(f"Unauthorized API access attempt from {request.remote_addr}")
             return jsonify({"error": "Authentication required"}), 401
+        
+        # Check if session has expired (24 hours)
+        session_created = session.get('_created', datetime.now().timestamp())
+        if datetime.now().timestamp() - session_created > 86400:  # 24 hours
+            logger.warning(f"Session expired for user {session['user_id']}")
+            session.clear()
+            return jsonify({"error": "Session expired"}), 401
+            
+        return f(*args, **kwargs)
+    decorated_function.__name__ = f.__name__
+    return decorated_function
+
+def login_required_page(f):
+    """Decorator to require login for protected page routes"""
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            logger.warning(f"Unauthorized page access attempt from {request.remote_addr}")
+            return redirect('/login.html')
+        
+        # Check if session has expired (24 hours)
+        session_created = session.get('_created', datetime.now().timestamp())
+        if datetime.now().timestamp() - session_created > 86400:  # 24 hours
+            logger.warning(f"Session expired for user {session['user_id']}")
+            session.clear()
+            return redirect('/login.html')
+            
         return f(*args, **kwargs)
     decorated_function.__name__ = f.__name__
     return decorated_function
@@ -250,34 +272,29 @@ Remember: You are a helpful banking assistant. Keep responses short and sweet. A
 # Customer-specific system prompt
 def get_customer_specific_prompt(customer_data=None):
     """Generate a customer-specific system prompt"""
-    base_prompt = """You are "Enhanced Banking Assistant," a compassionate and understanding banking companion designed to help customers with comprehensive banking support. You have access to customer data patterns for demonstration purposes only.
+    base_prompt = """You are a banking assistant. You ONLY respond to customer questions with direct, short answers.
 
-CORE PERSONALITY & APPROACH:
-- Be warm, calm, and genuinely caring - like a trusted friend who understands
-- Use a gentle, reassuring tone that helps customers feel heard and supported
-- Show deep empathy for their situation, especially if they're frustrated or stressed
-- Be patient and understanding - never rush or dismiss their concerns
-- Always acknowledge their feelings first before providing solutions
-- Use calming language and positive reinforcement
+ABSOLUTE RULES:
+- NEVER create customer messages or responses
+- NEVER role-play as anyone except yourself
+- NEVER generate conversations with yourself
+- NEVER use asterisks, brackets, or descriptive text
+- NEVER create fictional scenarios
+- ONLY respond to actual customer questions
+- Keep responses under 2 sentences
+- Be direct and professional
 
-IMPORTANT SAFETY RULES:
-- NEVER ask for or request real personal information (SSN, account numbers, passwords, PINs)
-- NEVER attempt to perform actual transactions or access real accounts
-- NEVER provide specific account balances or transaction details for real customers
-- If customers ask for account-specific information, politely explain you can't access real accounts
-- Always emphasize that any customer data shown is fictional and for demonstration only
-- If customers mention suspicious activity, immediately guide them to contact the bank's fraud department
-- Never display real customer names, emails, or phone numbers
+RESPONSE EXAMPLES:
+Customer: "My account is frozen"
+You: "Yes, I can see your account is frozen. Let me help you resolve this."
 
-RESPONSE STYLE:
-- Keep responses short and concise (2-3 sentences max)
-- Be warm and helpful but brief
-- Focus on the most important information
-- Use simple, clear language
-- Include 1-2 relevant emojis if appropriate
-- Get straight to the point
+Customer: "What's my balance?"
+You: "Your current balance is $2,450.67."
 
-Remember: You are a helpful banking assistant. Keep responses short and sweet. All customer data references are fictional and for demonstration purposes only."""
+Customer: "I need a loan"
+You: "I can help you with loan options. What type of loan are you looking for?"
+
+ONLY respond to banking questions. If asked about non-banking topics, say: "I'm a banking assistant and can only help with financial questions."""
 
     if customer_data:
         customer_info = f"""
@@ -442,26 +459,92 @@ banking_assistant = BankingAssistant()
 @app.route('/')
 def index():
     """Serve the main index page"""
+    # Check if user is already authenticated
+    if 'user_id' in session:
+        user_role = session.get('user_role')
+        if user_role == 'admin':
+            return redirect('/admin')
+        else:
+            return redirect('/chat')
+    
+    # If not authenticated, redirect to login
+    return redirect('/login.html')
+
+@app.route('/test-auth.html')
+def test_auth_page():
+    """Serve the authentication test page"""
     try:
-        index_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "index.html")
-        return send_file(index_file_path, mimetype='text/html')
+        # Use absolute path to ensure correct file location
+        test_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "test-auth.html")
+        return send_file(test_file_path, mimetype='text/html')
     except FileNotFoundError:
-        return "Index page not found", 404
+        return "Test page not found", 404
+
+@app.route('/test_session.html')
+def test_session_page():
+    """Serve the session test page"""
+    try:
+        # Use absolute path to ensure correct file location
+        test_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "test_session.html")
+        return send_file(test_file_path, mimetype='text/html')
+    except FileNotFoundError:
+        return "Test session page not found", 404
+
+@app.route('/test_fixes.html')
+def test_fixes_page():
+    """Serve the fixes test page"""
+    try:
+        # Use absolute path to ensure correct file location
+        test_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "test_fixes.html")
+        return send_file(test_file_path, mimetype='text/html')
+    except FileNotFoundError:
+        return "Test fixes page not found", 404
+
+@app.route('/test_logout_simple.html')
+def test_logout_simple_page():
+    """Serve the logout test page"""
+    try:
+        # Use absolute path to ensure correct file location
+        test_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "test_logout_simple.html")
+        return send_file(test_file_path, mimetype='text/html')
+    except FileNotFoundError:
+        return "Test logout page not found", 404
 
 @app.route('/login.html')
 def login_page():
     """Serve the login page"""
+    # Check if user is already authenticated
+    if 'user_id' in session:
+        user_role = session.get('user_role')
+        if user_role == 'admin':
+            return redirect('/admin')
+        else:
+            return redirect('/chat')
+    
     try:
-        login_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "login.html")
-        return send_file(login_file_path, mimetype='text/html')
+        # Use absolute path to ensure correct file location
+        login_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "login.html")
+        logger.info(f"Login page path: {login_file_path}")
+        logger.info(f"File exists: {os.path.exists(login_file_path)}")
+        
+        response = send_file(login_file_path, mimetype='text/html')
+        
+        # Add cache-busting headers to prevent caching
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
+        return response
     except FileNotFoundError:
+        logger.error(f"Login page not found at: {login_file_path}")
         return "Login page not found", 404
 
 @app.route('/images/<filename>')
 def serve_image(filename):
     """Serve images from the FE/images directory"""
     try:
-        image_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "images", filename)
+        # Use absolute path to ensure correct file location
+        image_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "images", filename)
         return send_file(image_file_path)
     except FileNotFoundError:
         return "Image not found", 404
@@ -470,7 +553,8 @@ def serve_image(filename):
 def serve_css(filename):
     """Serve CSS files from the FE/css directory"""
     try:
-        css_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "css", filename)
+        # Use absolute path to ensure correct file location
+        css_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "css", filename)
         return send_file(css_file_path, mimetype='text/css')
     except FileNotFoundError:
         return "CSS file not found", 404
@@ -479,7 +563,8 @@ def serve_css(filename):
 def serve_js(filename):
     """Serve JavaScript files from the FE/js directory"""
     try:
-        js_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "js", filename)
+        # Use absolute path to ensure correct file location
+        js_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "js", filename)
         return send_file(js_file_path, mimetype='application/javascript')
     except FileNotFoundError:
         return "JavaScript file not found", 404
@@ -488,58 +573,69 @@ def serve_js(filename):
 def serve_bank_logo():
     """Serve the bank logo image"""
     try:
-        logo_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "images", "Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png")
+        # Use absolute path to ensure correct file location
+        logo_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "images", "Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png")
         return send_file(logo_file_path, mimetype='image/png')
     except FileNotFoundError:
         return "Logo not found", 404
 
 @app.route('/loan-calculator.html')
-@login_required
+@login_required_page
 def loan_calculator():
     """Serve the loan calculator page"""
     try:
-        loan_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "loan-calculator.html")
+        # Use absolute path to ensure correct file location
+        loan_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "loan-calculator.html")
         return send_file(loan_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Loan calculator not found", 404
 
 @app.route('/chat')
-@login_required
+@login_required_page
 def chat_page():
     """Serve the chat page (requires authentication)"""
     try:
-        chat_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "small-bank-chat-backend.html")
-        return send_file(chat_file_path, mimetype='text/html')
+        # Use absolute path to ensure correct file location
+        chat_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "small-bank-chat-backend.html")
+        response = send_file(chat_file_path, mimetype='text/html')
+        
+        # Add cache-busting headers with unique timestamp
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        response.headers['Last-Modified'] = f'Mon, 04 Aug 2025 12:02:{timestamp} GMT'
+        response.headers['ETag'] = f'v1.0.4-{timestamp}'
+        
+        return response
     except FileNotFoundError:
         return "Chat page not found", 404
 
 @app.route('/admin')
-@login_required
+@login_required_page
 def admin_page():
     """Serve the admin dashboard page (requires admin authentication)"""
-    # Check if user is admin
-    if 'user_id' not in session:
-        return redirect('/')
-    
-    user_id = session['user_id']
+    # Check if user is admin (session check already done by decorator)
     user_role = session.get('user_role')
     
-    # Check if user is admin (either from hardcoded users or CSV)
+    # Check if user is admin
     if user_role != 'admin':
         return redirect('/chat')
     
     try:
-        admin_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "admin_dashboard.html")
+        # Use absolute path to ensure correct file location
+        admin_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "admin_dashboard.html")
         return send_file(admin_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Admin dashboard not found", 404
 
 @app.route('/admin_dashboard.html')
-@login_required
+@login_required_page
 def admin_dashboard_page():
     """Serve the admin dashboard page"""
     try:
-        admin_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "FE", "admin_dashboard.html")
+        # Use absolute path to ensure correct file location
+        admin_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FE", "admin_dashboard.html")
         return send_file(admin_file_path, mimetype='text/html')
     except FileNotFoundError:
         return "Admin dashboard not found", 404
@@ -552,40 +648,29 @@ def login():
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
         
+        logger.info(f"Login attempt for username: {username}")
+        logger.info(f"Session before login: {dict(session)}")
+        
         if not username or not password:
             return jsonify({"error": "Username and password are required"}), 400
         
-        # First check hardcoded users (admin, banker, demo)
-        if username in USERS:
-            hashed_password = hashlib.sha256(password.encode()).hexdigest()
-            if USERS[username]['password'] == hashed_password:
-                # Store user info in session
-                session['user_id'] = username
-                session['user_role'] = USERS[username]['role']
-                session['user_name'] = USERS[username]['name']
-                
-                logger.info(f"User {username} logged in successfully")
-                logger.info(f"Session after login: {dict(session)}")
-                
-                return jsonify({
-                    "success": True,
-                    "message": "Login successful",
-                    "user": {
-                        "username": username,
-                        "role": USERS[username]['role'],
-                        "name": USERS[username]['name']
-                    }
-                })
-        
-        # Then check customer login from CSV
+        # Check customer login from CSV data only
         customer_user = validate_customer_login(username, password)
         if customer_user:
             session['user_id'] = customer_user['username']
             session['user_role'] = customer_user['role']
             session['user_name'] = customer_user['name']
             session['customer_data'] = customer_user['customer_data']  # Store customer data in session
+            session['_created'] = datetime.now().timestamp()  # Add session creation timestamp
+            
+            # Force session to be saved
+            session.modified = True
+            
             logger.info(f"Customer {username} logged in successfully")
             logger.info(f"Session after customer login: {dict(session)}")
+            logger.info(f"Session modified flag: {session.modified}")
+            logger.info(f"Session cookie settings: secure={app.config['SESSION_COOKIE_SECURE']}, httponly={app.config['SESSION_COOKIE_HTTPONLY']}, samesite={app.config['SESSION_COOKIE_SAMESITE']}")
+            
             return jsonify({
                 "success": True,
                 "message": "Login successful",
@@ -596,6 +681,7 @@ def login():
                 }
             })
         
+        logger.info(f"Login failed for username: {username}")
         return jsonify({"error": "Invalid username or password"}), 401
         
     except Exception as e:
@@ -612,17 +698,64 @@ def logout():
     session.pop('user_role', None)
     session.pop('user_name', None)
     session.pop('customer_data', None)
+    session.pop('_created', None)
     session.clear()
     
     logger.info(f"Logout completed - Session after: {dict(session)}")
     
-    # Create response and set session cookie to expire immediately
+    # Create response and properly expire the session cookie
     response = jsonify({"success": True, "message": "Logout successful"})
-    response.delete_cookie('session')
-    response.set_cookie('session', '', expires=0, max_age=0)
     
-    # Force session to be marked as modified
+    # Force session to be marked as modified and cleared
     session.modified = True
+    
+    # Set session cookie to expire immediately and clear it
+    response.set_cookie(
+        'session', 
+        '', 
+        expires=0, 
+        max_age=0,
+        path='/',
+        domain=None,
+        secure=False,
+        httponly=True,
+        samesite='Lax'
+    )
+    
+    # Also clear the Flask session cookie
+    response.delete_cookie('session', path='/', domain=None)
+    
+    return response
+
+@app.route('/api/auth/force-clear-session', methods=['POST'])
+def force_clear_session():
+    """Force clear session for testing purposes"""
+    logger.info(f"Force clear session request - Session before: {dict(session)}")
+    
+    # Clear all session data
+    session.clear()
+    session.modified = True
+    
+    logger.info(f"Force clear session completed - Session after: {dict(session)}")
+    
+    # Create response and properly expire the session cookie
+    response = jsonify({"success": True, "message": "Session cleared"})
+    
+    # Set session cookie to expire immediately and clear it
+    response.set_cookie(
+        'session', 
+        '', 
+        expires=0, 
+        max_age=0,
+        path='/',
+        domain=None,
+        secure=False,
+        httponly=True,
+        samesite='Lax'
+    )
+    
+    # Also clear the Flask session cookie
+    response.delete_cookie('session', path='/', domain=None)
     
     return response
 
@@ -630,6 +763,9 @@ def logout():
 def auth_status():
     """Get current authentication status"""
     logger.info(f"Auth status check - Session: {dict(session)}")
+    logger.info(f"Request headers: {dict(request.headers)}")
+    logger.info(f"Request cookies: {dict(request.cookies)}")
+    
     if 'user_id' in session:
         logger.info(f"User {session['user_id']} is authenticated")
         return jsonify({
@@ -1109,7 +1245,12 @@ def health_check():
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "customer_count": len(banking_assistant.customers),
-        "ollama_endpoint": OLLAMA_ENDPOINT
+        "ollama_endpoint": OLLAMA_ENDPOINT,
+        "session_info": {
+            "has_session": 'user_id' in session,
+            "user_id": session.get('user_id'),
+            "user_role": session.get('user_role')
+        }
     })
 
 @app.route('/api/customer/usernames', methods=['GET'])
@@ -1150,9 +1291,13 @@ if __name__ == '__main__':
     print(f"📊 Loaded {len(banking_assistant.customers)} customers")
     print(f"🤖 Ollama endpoint: {OLLAMA_ENDPOINT}")
     print(f"🧠 Model: {MODEL_NAME}")
-    print(f"👥 Available users: {', '.join(USERS.keys())}")
+    customers = load_customer_data()
+    admin_users = [c['username'] for c in customers if c['account_type'] == 'admin']
+    customer_users = [c['username'] for c in customers if c['account_type'] != 'admin']
+    print(f"👥 Available admin users: {', '.join(admin_users[:3])}{'...' if len(admin_users) > 3 else ''}")
+    print(f"👤 Available customer users: {', '.join(customer_users[:5])}{'...' if len(customer_users) > 5 else ''}")
     print("=" * 50)
     print("Starting server on http://localhost:5001")
     print("Press Ctrl+C to stop")
     
-    app.run(debug=True, host='0.0.0.0', port=5001) 
+    app.run(debug=True, host='0.0.0.0', port=5001, use_reloader=False) 

@@ -4,7 +4,7 @@ CUST002,Sarah,Johnson,sarah.j@email.com,555-0102,sarahjohnson,$2b$12$LQv3c1yqBWV
 CUST003,Michael,Brown,mike.brown@email.com,555-0103,michaelbrown,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your mother's maiden name?,Johnson,email,medium,2021-11-08
 CUST004,Emily,Davis,emily.davis@email.com,555-0104,emilydavis,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Buddy,text,low,2019-05-30
 CUST005,David,Wilson,david.w@email.com,555-0105,davidwilson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What city were you born in?,Buddy,phone,low,2017-09-14
-CUST006,Lisa,Anderson,lisa.a@email.com,555-0106,lisaanderson,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite color?,Bella,email,high,2022-02-28
+CUST006,Lisa,Anderson,lisa.a@email.com,555-0106,lisaanderson,p,What is your favorite color?,Bella,email,high,2022-02-28
 CUST007,Robert,Taylor,rob.taylor@email.com,555-0107,roberttaylor,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was your first pet's name?,Fluffy,phone,low,2020-12-03
 CUST008,Jennifer,Martinez,jen.m@email.com,555-0108,jennifermartinez,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What is your favorite movie?,Daisy,email,medium,2021-06-17
 CUST009,Christopher,Lee,chris.lee@email.com,555-0109,christopherlee,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqHh6e,What was the name of your first school?,Luna,text,low,2018-11-25

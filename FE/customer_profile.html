@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Profile - Banking Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .back-button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .profile-content {
+            padding: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .profile-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #6c757d;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-frozen {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .risk-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .risk-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .risk-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .risk-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .balance {
+            font-weight: 600;
+            color: #28a745;
+            font-size: 16px;
+        }
+
+        .loan-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e1e5e9;
+            margin-bottom: 30px;
+        }
+
+        .loan-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .loan-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .loan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .loan-type {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+            text-transform: capitalize;
+        }
+
+        .loan-amount {
+            font-weight: 600;
+            color: #28a745;
+            font-size: 18px;
+        }
+
+        .loan-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .no-loans {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .account-type {
+            font-weight: 600;
+            color: #2c3e50;
+            text-transform: capitalize;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .loan-details {
+                grid-template-columns: 1fr;
+            }
+
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="header-left">
+                <img src="images/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Bank Logo">
+                <div>
+                    <h1>Customer Profile</h1>
+                    <p id="customerName">Loading...</p>
+                </div>
+            </div>
+            <a href="admin_dashboard.html" class="back-button">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+        <div class="profile-content">
+            <div id="profileContent">
+                <div class="loading">Loading customer profile...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:5001';
+        
+        // Get customer ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerId = urlParams.get('id');
+
+        if (!customerId) {
+            document.getElementById('profileContent').innerHTML = 
+                '<div class="error-message">No customer ID provided. Please go back to the dashboard.</div>';
+        } else {
+            loadCustomerProfile(customerId);
+        }
+
+        async function loadCustomerProfile(customerId) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/customer/${customerId}`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const customer = await response.json();
+                    renderCustomerProfile(customer);
+                } else if (response.status === 404) {
+                    document.getElementById('profileContent').innerHTML = 
+                        '<div class="error-message">Customer not found. Please check the customer ID and try again.</div>';
+                } else {
+                    throw new Error('Failed to load customer profile');
+                }
+            } catch (error) {
+                console.error('Error loading customer profile:', error);
+                document.getElementById('profileContent').innerHTML = 
+                    '<div class="error-message">Error loading customer profile. Please try again.</div>';
+            }
+        }
+
+        function renderCustomerProfile(customer) {
+            document.getElementById('customerName').textContent = `${customer.first_name} ${customer.last_name}`;
+            
+            const statusClass = customer.account_status === 'active' ? 'status-active' : 'status-frozen';
+            const riskClass = `risk-${customer.risk_level}`;
+            
+            let profileHTML = `
+                <div class="profile-grid">
+                    <div class="profile-section">
+                        <h2 class="section-title">Personal Information</h2>
+                        <div class="info-row">
+                            <span class="info-label">Customer ID</span>
+                            <span class="info-value">${customer.customer_id}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value">${customer.first_name} ${customer.last_name}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">${customer.email}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">${customer.phone}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Username</span>
+                            <span class="info-value">${customer.username}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Opened</span>
+                            <span class="info-value">${customer.account_opened_date}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Last Transaction</span>
+                            <span class="info-value">${customer.last_transaction_date}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h2 class="section-title">Account Information</h2>
+                        <div class="info-row">
+                            <span class="info-label">Account Type</span>
+                            <span class="info-value"><span class="account-type">${customer.account_type.replace('_', ' ')}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Status</span>
+                            <span class="info-value"><span class="status-badge ${statusClass}">${customer.account_status}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Current Balance</span>
+                            <span class="info-value"><span class="balance">$${parseFloat(customer.balance).toLocaleString()}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Credit Score</span>
+                            <span class="info-value">${customer.credit_score}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Risk Level</span>
+                            <span class="info-value"><span class="risk-badge ${riskClass}">${customer.risk_level}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Preferred Contact</span>
+                            <span class="info-value">${customer.preferred_contact_method}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Common Issues</span>
+                            <span class="info-value">${customer.common_issues.replace('_', ' ')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-grid">
+                    <div class="profile-section">
+                        <h2 class="section-title">Financial Information</h2>
+                        <div class="info-row">
+                            <span class="info-label">Monthly Income</span>
+                            <span class="info-value">$${parseFloat(customer.monthly_income).toLocaleString()}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Monthly Expenses</span>
+                            <span class="info-value">$${parseFloat(customer.monthly_expenses).toLocaleString()}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Interest Rate</span>
+                            <span class="info-value">${customer.interest_rate}%</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h2 class="section-title">Security Information</h2>
+                        <div class="info-row">
+                            <span class="info-label">Security Question</span>
+                            <span class="info-value">${customer.security_question}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Security Answer</span>
+                            <span class="info-value">${customer.security_answer}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Reset Token Expiry</span>
+                            <span class="info-value">${customer.reset_token_expiry || 'None'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add loan information if customer has loans
+            if (customer.has_loans === 'yes') {
+                const loanTypes = customer.loan_types.split(',');
+                const loanAmounts = customer.loan_amounts.split(',');
+                const monthlyPayments = customer.monthly_payments ? customer.monthly_payments.split(',') : [];
+
+                profileHTML += `
+                    <div class="loan-section">
+                        <h2 class="section-title">Loan Information</h2>
+                `;
+
+                loanTypes.forEach((loanType, index) => {
+                    const amount = parseFloat(loanAmounts[index] || 0);
+                    const payment = monthlyPayments[index] ? parseFloat(monthlyPayments[index]) : 0;
+                    
+                    profileHTML += `
+                        <div class="loan-item">
+                            <div class="loan-header">
+                                <span class="loan-type">${loanType.replace('_', ' ')}</span>
+                                <span class="loan-amount">$${amount.toLocaleString()}</span>
+                            </div>
+                            <div class="loan-details">
+                                <div class="info-row">
+                                    <span class="info-label">Loan Amount</span>
+                                    <span class="info-value">$${amount.toLocaleString()}</span>
+                                </div>
+                                ${payment > 0 ? `
+                                <div class="info-row">
+                                    <span class="info-label">Monthly Payment</span>
+                                    <span class="info-value">$${payment.toLocaleString()}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                profileHTML += '</div>';
+            } else {
+                profileHTML += `
+                    <div class="loan-section">
+                        <h2 class="section-title">Loan Information</h2>
+                        <div class="no-loans">This customer has no active loans.</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('profileContent').innerHTML = profileHTML;
+        }
+    </script>
+</body>
+</html> 

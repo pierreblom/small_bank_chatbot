@@ -1,0 +1,327 @@
+# Banking Assistant Training Data
+# Format: Human: [question] Assistant: [answer]
+
+Human: What is my current account balance?
+Assistant: I can help you check your account balance. Based on your account information, your current balance is $[BALANCE]. Would you like me to show you recent transactions or help you with anything else related to your account?
+
+Human: How do I apply for a loan?
+Assistant: I'd be happy to help you with a loan application! Here's the process:
+
+1. **Loan Types Available:**
+   - Personal Loans (up to $50,000)
+   - Auto Loans (up to $75,000)
+   - Home Loans (up to $500,000)
+   - Business Loans (up to $250,000)
+
+2. **Requirements:**
+   - Valid government ID
+   - Proof of income (paystubs, tax returns)
+   - Credit score of 650 or higher
+   - Minimum 2 years of employment history
+
+3. **Application Process:**
+   - Visit our loan calculator to estimate payments
+   - Schedule an appointment with a loan officer
+   - Complete the application form
+   - Submit required documentation
+
+Would you like me to help you calculate potential loan payments or check your eligibility?
+
+Human: What's the difference between APR and APY?
+Assistant: Great question! Here's the key difference:
+
+**APR (Annual Percentage Rate):**
+- The cost of borrowing money (for loans)
+- Includes interest rate + fees
+- Example: 5% APR on a $10,000 loan = $500 in interest per year
+
+**APY (Annual Percentage Yield):**
+- The return on your money (for savings/investments)
+- Includes compound interest
+- Example: 2% APY on $10,000 savings = $200 earned per year
+
+**Simple Rule:** APR is what you pay (loans), APY is what you earn (savings).
+
+Human: How do I set up online banking?
+Assistant: Setting up online banking is easy and secure! Here's how:
+
+1. **Visit our website** and click "Enroll in Online Banking"
+2. **Enter your information:**
+   - Account number
+   - Social Security Number
+   - Email address
+3. **Create your credentials:**
+   - Username (must be unique)
+   - Strong password (8+ characters, mix of letters/numbers)
+   - Security questions
+4. **Verify your identity** via email or phone
+5. **Set up additional security** (optional):
+   - Two-factor authentication
+   - Biometric login
+   - Security alerts
+
+**Security Tips:**
+- Never share your login credentials
+- Use a strong, unique password
+- Log out when finished
+- Monitor your accounts regularly
+
+Human: What should I do if I suspect fraud?
+Assistant: If you suspect fraud, act quickly! Here's what to do:
+
+**Immediate Steps:**
+1. **Call us immediately** at 1-800-SMALL-BANK (24/7 fraud line)
+2. **Freeze your accounts** if needed
+3. **Change your passwords** for online banking
+4. **Monitor your accounts** for suspicious activity
+
+**Document Everything:**
+- Keep records of all communications
+- Note dates and times of suspicious activity
+- Save any fraudulent emails or messages
+- Take screenshots if needed
+
+**Additional Protection:**
+- File a police report
+- Contact credit bureaus to place fraud alerts
+- Consider identity theft protection services
+
+**We're Here to Help:**
+Our fraud team will work with you to resolve the issue and protect your accounts. We have zero liability for unauthorized transactions when reported promptly.
+
+Human: How do I transfer money between accounts?
+Assistant: You can transfer money between accounts in several ways:
+
+**Online Banking:**
+1. Log into your online banking
+2. Click "Transfers" or "Move Money"
+3. Select "Between My Accounts"
+4. Choose from/to accounts
+5. Enter amount and date
+6. Confirm the transfer
+
+**Mobile App:**
+1. Open the Small Bank app
+2. Tap "Transfer"
+3. Select accounts and amount
+4. Use Face ID or fingerprint to confirm
+
+**In Person:**
+1. Visit any branch
+2. Bring valid ID
+3. Fill out transfer slip
+4. Present to teller
+
+**Transfer Limits:**
+- Online: Up to $10,000 per day
+- Mobile: Up to $5,000 per day
+- In person: No daily limit
+
+**Processing Times:**
+- Same account transfers: Instant
+- Different account transfers: 1-2 business days
+- External bank transfers: 2-3 business days
+
+Human: What investment options do you offer?
+Assistant: We offer a variety of investment options to help you grow your wealth:
+
+**Retirement Accounts:**
+- **Traditional IRA:** Tax-deductible contributions, taxed on withdrawal
+- **Roth IRA:** After-tax contributions, tax-free withdrawals
+- **401(k) Rollover:** Transfer from previous employer
+- **SEP IRA:** For self-employed individuals
+
+**Investment Products:**
+- **Certificates of Deposit (CDs):** Fixed interest rates, terms from 3 months to 5 years
+- **Money Market Accounts:** Higher interest than savings, check-writing privileges
+- **Mutual Funds:** Diversified portfolios managed by professionals
+- **Individual Stocks:** Direct stock purchases
+- **Bonds:** Government and corporate bonds
+
+**Investment Services:**
+- **Financial Planning:** Comprehensive financial analysis
+- **Portfolio Management:** Professional investment management
+- **Retirement Planning:** Long-term financial strategy
+- **Education Savings:** 529 plans for college expenses
+
+**Risk Levels:**
+- **Conservative:** CDs, money market, government bonds
+- **Moderate:** Balanced mutual funds, corporate bonds
+- **Aggressive:** Stock funds, individual stocks
+
+Would you like to schedule a consultation with our investment advisor?
+
+Human: How do I order checks?
+Assistant: Ordering checks is simple! Here are your options:
+
+**Online Banking:**
+1. Log into your account
+2. Go to "Account Services"
+3. Click "Order Checks"
+4. Choose your style and quantity
+5. Confirm your address
+6. Submit order
+
+**Mobile App:**
+1. Open the Small Bank app
+2. Tap "More" or "Services"
+3. Select "Order Checks"
+4. Follow the prompts
+
+**In Person:**
+1. Visit any branch
+2. Bring valid ID
+3. Fill out check order form
+4. Pay any applicable fees
+
+**Check Styles Available:**
+- **Standard:** Basic design, lowest cost
+- **Deluxe:** Enhanced design with security features
+- **Custom:** Personalized with your design
+- **Business:** Professional business checks
+
+**Pricing:**
+- Standard: $15 for 100 checks
+- Deluxe: $25 for 100 checks
+- Custom: $35 for 100 checks
+- Business: $45 for 100 checks
+
+**Delivery Time:**
+- Standard shipping: 7-10 business days
+- Express shipping: 3-5 business days (additional fee)
+
+**Security Features:**
+- Watermark protection
+- Microprinting
+- Security screen
+- Positive pay (business accounts)
+
+Human: What are the fees for my account?
+Assistant: Here are the common fees for our accounts:
+
+**Monthly Maintenance Fees:**
+- **Basic Checking:** $5/month (waived with $500 minimum balance)
+- **Premium Checking:** $12/month (waived with $1,500 minimum balance)
+- **Student Checking:** $0/month (ages 16-24)
+- **Senior Checking:** $0/month (ages 65+)
+
+**Transaction Fees:**
+- **ATM Withdrawals:** $2.50 (after 4 free per month)
+- **Overdraft:** $35 per occurrence
+- **Returned Check:** $25
+- **Wire Transfer:** $25 domestic, $45 international
+- **Cashier's Check:** $8
+- **Stop Payment:** $30
+
+**Savings Account Fees:**
+- **Basic Savings:** $3/month (waived with $300 minimum balance)
+- **High-Yield Savings:** $0/month (no minimum balance)
+
+**Fee Waivers:**
+- Direct deposit of $500+ per month
+- Maintain minimum balance
+- Student or senior status
+- Military service member
+
+**How to Avoid Fees:**
+1. Set up direct deposit
+2. Maintain minimum balance
+3. Use in-network ATMs
+4. Monitor your account regularly
+5. Set up low balance alerts
+
+Human: How do I dispute a charge?
+Assistant: If you need to dispute a charge, here's the process:
+
+**Step 1: Gather Information**
+- Transaction date and amount
+- Merchant name and location
+- Receipt or confirmation number
+- Your account statement
+
+**Step 2: Contact the Merchant**
+- Call the merchant first
+- Explain the issue
+- Request a refund or correction
+- Keep records of all communications
+
+**Step 3: File Dispute with Bank**
+If merchant doesn't resolve:
+1. **Call us** at 1-800-SMALL-BANK
+2. **Visit a branch** with documentation
+3. **Use online banking** dispute feature
+
+**Required Information:**
+- Account number
+- Transaction details
+- Reason for dispute
+- Supporting documentation
+- Desired resolution
+
+**Dispute Reasons:**
+- Unauthorized transaction
+- Incorrect amount charged
+- Goods/services not received
+- Defective merchandise
+- Duplicate charges
+- Billing errors
+
+**Timeline:**
+- **Initial Review:** 10 business days
+- **Provisional Credit:** Available for valid disputes
+- **Final Resolution:** 45-90 days
+- **Appeal Rights:** Available if dispute denied
+
+**Protection:**
+- Zero liability for unauthorized charges
+- Provisional credit during investigation
+- Right to appeal decisions
+
+Human: What's the best way to save money?
+Assistant: Here are proven strategies to build your savings:
+
+**Start with a Budget:**
+1. **Track your spending** for 30 days
+2. **Categorize expenses** (needs vs. wants)
+3. **Set spending limits** for each category
+4. **Review and adjust** monthly
+
+**Automate Your Savings:**
+- **Direct Deposit Split:** Send portion directly to savings
+- **Round-Up Programs:** Round purchases to nearest dollar
+- **Scheduled Transfers:** Automatic monthly transfers
+- **Pay Yourself First:** Save before spending
+
+**Choose the Right Account:**
+- **High-Yield Savings:** 2.5% APY (no minimum)
+- **CDs:** 3.5% APY for 12-month terms
+- **Money Market:** 2.8% APY with check-writing
+- **IRA:** Tax-advantaged retirement savings
+
+**Smart Spending Tips:**
+- **Use cashback cards** for everyday purchases
+- **Shop with lists** to avoid impulse buys
+- **Compare prices** before major purchases
+- **Cook at home** instead of eating out
+- **Cancel unused subscriptions**
+- **Buy generic** when possible
+
+**Emergency Fund:**
+- **Goal:** 3-6 months of expenses
+- **Start small:** $500, then $1,000
+- **Keep separate** from other savings
+- **Only use for true emergencies**
+
+**Long-Term Savings:**
+- **Retirement:** 401(k), IRA (15% of income)
+- **Education:** 529 plans for children
+- **Home:** Down payment savings
+- **Travel:** Dedicated vacation fund
+
+**Tools to Help:**
+- **Budgeting Apps:** Track spending automatically
+- **Savings Goals:** Set targets in online banking
+- **Financial Planning:** Free consultation available
+- **Automatic Alerts:** Low balance notifications
+
+Remember: Start small and be consistent. Even $25 per week adds up to $1,300 per year! 
