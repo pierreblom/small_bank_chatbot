@@ -18,16 +18,12 @@ def init_page_routes(app, frontend_path):
     @page_bp.route('/')
     def index():
         """Serve the main index page"""
-        # Check if user is already authenticated
-        if 'user_id' in session:
-            user_role = session.get('user_role')
-            if user_role == 'admin':
-                return redirect('/admin')
-            else:
-                return redirect('/chat')
-        
-        # If not authenticated, redirect to login
-        return redirect('/login.html')
+        try:
+            index_file_path = os.path.join(frontend_path, "index.html")
+            return send_file(index_file_path, mimetype='text/html')
+        except FileNotFoundError:
+            # Fallback to login page if index.html doesn't exist
+            return redirect('/login.html')
 
     @page_bp.route('/test-auth.html')
     def test_auth_page():
@@ -185,6 +181,26 @@ def init_page_routes(app, frontend_path):
             return send_file(admin_file_path, mimetype='text/html')
         except FileNotFoundError:
             return "Admin dashboard not found", 404
+
+    @page_bp.route('/admin_login.html')
+    def admin_login_page():
+        """Serve the admin login page"""
+        try:
+            admin_login_file_path = os.path.join(frontend_path, "admin_login.html")
+            logger.info(f"Admin login page path: {admin_login_file_path}")
+            logger.info(f"File exists: {os.path.exists(admin_login_file_path)}")
+            
+            response = send_file(admin_login_file_path, mimetype='text/html')
+            
+            # Add cache-busting headers to prevent caching
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+            
+            return response
+        except FileNotFoundError:
+            logger.error(f"Admin login page not found at: {admin_login_file_path}")
+            return "Admin login page not found", 404
 
     @page_bp.route('/customer_profile.html')
     def customer_profile_page():

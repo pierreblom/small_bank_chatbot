@@ -3,14 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting to Login</title>
-    <script>
-        // Automatically redirect to login page
-        window.location.href = 'login.html';
-    </script>
+    <title>Small Bank - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .welcome-container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .welcome-header h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .welcome-header p {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .login-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .login-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .login-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .login-option.customer {
+            border-color: #667eea;
+        }
+
+        .login-option.customer:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .login-option.admin {
+            border-color: #e74c3c;
+        }
+
+        .login-option.admin:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .login-option-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .login-option h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .login-option p {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .login-option:hover p {
+            color: inherit;
+        }
+
+        .demo-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            border: 1px solid #ffeaa7;
+            margin-top: 20px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .login-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to login page...</p>
-    <p>If you are not redirected automatically, <a href="login.html">click here</a>.</p>
+    <div class="welcome-container">
+        <div class="logo-container">
+            <img src="images/Gemini_Generated_Image_b2kiqjb2kiqjb2ki.png" alt="Small Bank Logo">
+        </div>
+
+        <div class="welcome-header">
+            <h1>Welcome to Small Bank</h1>
+            <p>Your personal banking companion with AI-powered assistance</p>
+        </div>
+
+        <div class="login-options">
+            <a href="login.html" class="login-option customer">
+                <div class="login-option-icon">👤</div>
+                <h3>Customer Login</h3>
+                <p>Access your personal banking dashboard and chat with our AI assistant</p>
+            </a>
+
+            <a href="admin_login.html" class="login-option admin">
+                <div class="login-option-icon">🔧</div>
+                <h3>Admin Login</h3>
+                <p>Administrative access to manage customers and view system statistics</p>
+            </a>
+        </div>
+
+        <div class="demo-notice">
+            🚀 <strong>Multi-Session Demo:</strong> You can now login as both admin and customer simultaneously in different tabs!
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h4>🤖 AI Chat Assistant</h4>
+                <p>Get instant help with banking questions and account management</p>
+            </div>
+            <div class="feature">
+                <h4>📊 Account Overview</h4>
+                <p>View your balances, transactions, and account details</p>
+            </div>
+            <div class="feature">
+                <h4>🔒 Secure Access</h4>
+                <p>Multi-session support allows concurrent admin and customer access</p>
+            </div>
+            <div class="feature">
+                <h4>📱 Responsive Design</h4>
+                <p>Works seamlessly on desktop, tablet, and mobile devices</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Small Bank Welcome Page loaded');
+        console.log('Multi-session demo: You can login as admin and customer in different tabs!');
+        
+        // Add some interactive effects
+        document.querySelectorAll('.login-option').forEach(option => {
+            option.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            option.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
 </body>
 </html> 

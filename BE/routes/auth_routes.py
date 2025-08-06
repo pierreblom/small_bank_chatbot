@@ -9,7 +9,10 @@ from utils.auth_utils import (
     validate_customer_login, 
     update_customer_password, 
     generate_reset_token, 
-    validate_reset_token
+    validate_reset_token,
+    create_multi_session_cookie,
+    get_current_session_data,
+    clear_session_cookies
 )
 
 logger = logging.getLogger(__name__)
@@ -21,7 +24,7 @@ def init_auth_routes(app, csv_file_path):
     
     @auth_bp.route('/api/auth/login', methods=['POST'])
     def login():
-        """Handle user login"""
+        """Handle user login (general endpoint)"""
         try:
             data = request.get_json()
             username = data.get('username', '').strip()
@@ -36,20 +39,8 @@ def init_auth_routes(app, csv_file_path):
             # Check customer login from CSV data only
             customer_user = validate_customer_login(csv_file_path, username, password)
             if customer_user:
-                session['user_id'] = customer_user['username']
-                session['user_role'] = customer_user['role']
-                session['user_name'] = customer_user['name']
-                session['customer_data'] = customer_user['customer_data']  # Store customer data in session
-                session['_created'] = datetime.now().timestamp()  # Add session creation timestamp
-                
-                # Force session to be saved
-                session.modified = True
-                
-                logger.info(f"Customer {username} logged in successfully")
-                logger.info(f"Session after customer login: {dict(session)}")
-                logger.info(f"Session modified flag: {session.modified}")
-                
-                return jsonify({
+                # Create response with multi-session cookie
+                response = jsonify({
                     "success": True,
                     "message": "Login successful",
                     "user": {
@@ -58,6 +49,22 @@ def init_auth_routes(app, csv_file_path):
                         "name": customer_user['name']
                     }
                 })
+                
+                # Set role-specific session cookie
+                response = create_multi_session_cookie(customer_user, response)
+                
+                # Also set Flask session for backward compatibility
+                session['user_id'] = customer_user['username']
+                session['user_role'] = customer_user['role']
+                session['user_name'] = customer_user['name']
+                session['customer_data'] = customer_user['customer_data']
+                session['_created'] = datetime.now().timestamp()
+                session.modified = True
+                
+                logger.info(f"User {username} logged in successfully")
+                logger.info(f"Session after login: {dict(session)}")
+                
+                return response
             
             logger.info(f"Login failed for username: {username}")
             return jsonify({"error": "Invalid username or password"}), 401
@@ -66,10 +73,111 @@ def init_auth_routes(app, csv_file_path):
             logger.error(f"Login error: {e}")
             return jsonify({"error": "Login failed"}), 500
 
+    @auth_bp.route('/api/auth/login/admin', methods=['POST'])
+    def admin_login():
+        """Handle admin login specifically"""
+        try:
+            data = request.get_json()
+            username = data.get('username', '').strip()
+            password = data.get('password', '').strip()
+            
+            logger.info(f"Admin login attempt for username: {username}")
+            
+            if not username or not password:
+                return jsonify({"error": "Username and password are required"}), 400
+            
+            # Check admin login from CSV data
+            admin_user = validate_customer_login(csv_file_path, username, password)
+            if admin_user and admin_user['role'] == 'admin':
+                # Create response with multi-session cookie
+                response = jsonify({
+                    "success": True,
+                    "message": "Admin login successful",
+                    "user": {
+                        "username": username,
+                        "role": admin_user['role'],
+                        "name": admin_user['name']
+                    }
+                })
+                
+                # Set role-specific session cookie
+                response = create_multi_session_cookie(admin_user, response)
+                
+                # Also set Flask session for backward compatibility
+                session['user_id'] = admin_user['username']
+                session['user_role'] = admin_user['role']
+                session['user_name'] = admin_user['name']
+                session['customer_data'] = admin_user['customer_data']
+                session['_created'] = datetime.now().timestamp()
+                session.modified = True
+                
+                logger.info(f"Admin {username} logged in successfully")
+                
+                return response
+            
+            logger.info(f"Admin login failed for username: {username}")
+            return jsonify({"error": "Invalid admin credentials"}), 401
+            
+        except Exception as e:
+            logger.error(f"Admin login error: {e}")
+            return jsonify({"error": "Admin login failed"}), 500
+
+    @auth_bp.route('/api/auth/login/customer', methods=['POST'])
+    def customer_login():
+        """Handle customer login specifically"""
+        try:
+            data = request.get_json()
+            username = data.get('username', '').strip()
+            password = data.get('password', '').strip()
+            
+            logger.info(f"Customer login attempt for username: {username}")
+            
+            if not username or not password:
+                return jsonify({"error": "Username and password are required"}), 400
+            
+            # Check customer login from CSV data
+            customer_user = validate_customer_login(csv_file_path, username, password)
+            if customer_user and customer_user['role'] == 'customer':
+                # Create response with multi-session cookie
+                response = jsonify({
+                    "success": True,
+                    "message": "Customer login successful",
+                    "user": {
+                        "username": username,
+                        "role": customer_user['role'],
+                        "name": customer_user['name']
+                    }
+                })
+                
+                # Set role-specific session cookie
+                response = create_multi_session_cookie(customer_user, response)
+                
+                # Also set Flask session for backward compatibility
+                session['user_id'] = customer_user['username']
+                session['user_role'] = customer_user['role']
+                session['user_name'] = customer_user['name']
+                session['customer_data'] = customer_user['customer_data']
+                session['_created'] = datetime.now().timestamp()
+                session.modified = True
+                
+                logger.info(f"Customer {username} logged in successfully")
+                
+                return response
+            
+            logger.info(f"Customer login failed for username: {username}")
+            return jsonify({"error": "Invalid customer credentials"}), 401
+            
+        except Exception as e:
+            logger.error(f"Customer login error: {e}")
+            return jsonify({"error": "Customer login failed"}), 500
+
     @auth_bp.route('/api/auth/logout', methods=['POST'])
     def logout():
         """Handle user logout"""
         logger.info(f"Logout request - Session before: {dict(session)}")
+        
+        # Get current session data to know which cookies to clear
+        session_data = get_current_session_data(request)
         
         # Clear all session data
         session.pop('user_id', None)
@@ -81,27 +189,18 @@ def init_auth_routes(app, csv_file_path):
         
         logger.info(f"Logout completed - Session after: {dict(session)}")
         
-        # Create response and properly expire the session cookie
+        # Create response and clear session cookies
         response = jsonify({"success": True, "message": "Logout successful"})
         
-        # Force session to be marked as modified and cleared
-        session.modified = True
-        
-        # Set session cookie to expire immediately and clear it
-        response.set_cookie(
-            'session', 
-            '', 
-            expires=0, 
-            max_age=0,
-            path='/',
-            domain=None,
-            secure=False,
-            httponly=True,
-            samesite='Lax'
-        )
-        
-        # Also clear the Flask session cookie
-        response.delete_cookie('session', path='/', domain=None)
+        # Clear role-specific session cookies
+        if session_data:
+            response = clear_session_cookies(
+                response, 
+                session_data.get('user_id'), 
+                session_data.get('user_role')
+            )
+        else:
+            response = clear_session_cookies(response)
         
         return response
 
@@ -144,8 +243,22 @@ def init_auth_routes(app, csv_file_path):
         logger.info(f"Request headers: {dict(request.headers)}")
         logger.info(f"Request cookies: {dict(request.cookies)}")
         
-        if 'user_id' in session:
-            logger.info(f"User {session['user_id']} is authenticated")
+        # Check for session data in cookies first
+        session_data = get_current_session_data(request)
+        
+        if session_data and 'user_id' in session_data:
+            logger.info(f"User {session_data['user_id']} is authenticated")
+            return jsonify({
+                "authenticated": True,
+                "user": {
+                    "username": session_data['user_id'],
+                    "role": session_data.get('user_role'),
+                    "name": session_data.get('user_name')
+                }
+            })
+        elif 'user_id' in session:
+            # Fallback to Flask session
+            logger.info(f"User {session['user_id']} is authenticated (Flask session)")
             return jsonify({
                 "authenticated": True,
                 "user": {

@@ -160,6 +160,21 @@
             text-decoration: underline;
         }
 
+        .switch-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .switch-login a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .switch-login a:hover {
+            text-decoration: underline;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -319,6 +334,10 @@
             <a href="#" id="forgotPasswordLink">Forgot Password?</a>
         </div>
 
+        <div class="switch-login">
+            <a href="admin_login.html">Switch to Admin Login</a>
+        </div>
+
 
 
         <div class="security-notice">
@@ -418,7 +437,7 @@
             hideSuccessMessage();
             
             try {
-                const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+                const response = await fetch(`${BACKEND_URL}/api/auth/login/customer`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
